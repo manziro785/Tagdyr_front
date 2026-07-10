@@ -1,0 +1,35 @@
+import Link from "next/link";
+
+/**
+ * Общий каркас экранов аутентификации «Тагдыр»:
+ * полноэкранный размытый фон-долина с тёплым скримом и
+ * вертикально отцентрованный контент.
+ */
+export function AuthShell({ children }: { children: React.ReactNode }) {
+  return (
+    <main className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 py-10 font-sans text-tg-brown">
+      {/* фон: размытая долина с юртами + тёплый скрим */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/tagdyr/bg-valley.png"
+          alt=""
+          className="absolute -inset-[4%] size-[108%] object-cover blur-[6px] saturate-[1.04] brightness-[1.02]"
+        />
+        <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(245,235,221,0.34)_0%,rgba(244,233,216,0.28)_34%,rgba(243,229,208,0.6)_74%,rgba(238,222,198,0.86)_100%)]" />
+      </div>
+
+      {/* лого-ссылка наверху для возврата на лендинг */}
+      <Link
+        href="/"
+        className="absolute top-5 left-1/2 -translate-x-1/2 font-display text-lg font-bold tracking-[-0.5px] text-tg-brown/70 transition-colors hover:text-tg-brown sm:left-6 sm:translate-x-0"
+      >
+        Тагдыр
+      </Link>
+
+      <div className="flex w-full max-w-[400px] flex-col gap-[22px]">
+        {children}
+      </div>
+    </main>
+  );
+}

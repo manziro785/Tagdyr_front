@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Тагдыр — симулятор жизни про Кыргызстан
 
-## Getting Started
+Мобайл-фёрст игра: ведёшь персонажа от выпускника до взрослого, решая карточками
+(в духе Reigns/BitLife). Маленькие выборы складываются в судьбу; финансовая
+грамотность вшита в механику — урок показывается последствием, а не нотацией.
 
-First, run the development server:
+## Быстрый старт
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Игра **полностью играбельна без бэкенда**: кнопка «Войти как гость» включает
+локальный режим (прогресс в localStorage). Для аккаунтов и серверных сохранений
+запусти [tagdyr-backend](../tagdyr-backend) (`pnpm dev`, порт 8787) — адрес API
+задаётся в `.env` через `NEXT_PUBLIC_BASE_URL`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Что внутри
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **5 сезонов жизни** (Выпускник → Студенчество → Первая работа → Зрелость →
+  Своя дорога), ~33 события с кыргызским колоритом: той у родни, Дордой,
+  маршрутки, Иссык-Куль.
+- **4 стата**: деньги (сомы), энергия, настроение, отношения.
+- **Мини-игра «Бюджет месяца»**: первая зарплата раскладывается по конвертам,
+  на всё не хватает.
+- **Скип времени**: между сезонами проходят годы — накопления растут под
+  процент, долги обрастают процентами (визуализация в межсезонье).
+- **10 концовок** (архетипы) + **12 карточек знаний** — собираются за несколько
+  жизней; концовка «Опора» открывает скрытого персонажа.
+- **До 3 параллельных жизней** и экран сравнения «где дороги разошлись».
 
-## Learn More
+## Архитектура
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                  # App Router: (public) лендинг+auth, (private) игра
+├── entities/
+│   ├── game/
+│   │   ├── content/      # данные: сезоны, события, персонажи, карточки, концовки
+│   │   ├── model/        # движок: seeded RNG, ходы, finance-порт, zustand-ран
+│   │   ├── api/          # GameApi: serverApi (axios) и localApi (гостевой)
+│   │   └── ui/           # аватар, статы, карточки выбора, фоны сцен
+│   └── session/          # auth-стор (user/guest)
+├── features/auth/        # формы входа/регистрации
+└── widgets/              # экраны: lives, play (ход/межсезонье/финал), profile…
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Ключевые принципы (из ТЗ бэкенда):
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Симуляцию считает клиент, сервер хранит и проверяет.** Текущий сезон живёт
+  в Zustand+persist (`tagdyr-runs`), сервер узнаёт о нём один раз — в
+  `POST /lives/:id/seasons/:n/complete`.
+- **Детерминизм**: RNG (cyrb53+mulberry32) сидируется от seed жизни; один seed —
+  один ран, перезагрузка не даёт «перекинуть кубик».
+- **Гостевой режим** реализует тот же интерфейс `GameApi` поверх localStorage;
+  серверная математика (сложный процент, индекс жизни, концовка) портирована в
+  `entities/game/model/finance.ts` и обязана совпадать с `@tagdyr/engine`.
 
-## Deploy on Vercel
+## Проверки
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npx tsc --noEmit     # типы
+npm run lint         # eslint
+npm run build        # прод-сборка
+node ../tagdyr-backend/node_modules/tsx/dist/cli.mjs scripts/simulate.ts
+                     # смоук-симуляция: 600 полных жизней, целостность контента,
+                     # детерминизм, распределение концовок
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Контракт с бэкендом
+
+Типы DTO (`entities/game/api/types.ts`), контент-коды (персонажи, карточки,
+концовки) и формулы (`finance.ts`) продублированы с `tagdyr-backend/packages/*`
+вручную — пакеты не публикуются. Менять только синхронно с бэкендом.

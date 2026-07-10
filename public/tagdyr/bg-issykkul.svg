@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <!-- закатное небо -->
+  <rect width="800" height="600" fill="#F5E6CB"/>
+  <circle cx="400" cy="180" r="64" fill="#EFBE63"/>
+  <circle cx="400" cy="180" r="92" fill="#EFBE63" opacity="0.25"/>
+  <!-- горные хребты -->
+  <path d="M0 230 L130 120 L250 215 L390 100 L530 220 L650 135 L800 215 L800 330 L0 330 Z" fill="#B08A5E" opacity="0.5"/>
+  <path d="M0 280 L110 200 L240 270 L370 185 L520 275 L650 205 L800 270 L800 380 L0 380 Z" fill="#9C8268" opacity="0.55"/>
+  <!-- снежные шапки -->
+  <path d="M370 100 L400 128 L390 132 L370 118 L352 130 L344 124 Z" fill="#FFFCF6" opacity="0.9"/>
+  <path d="M130 120 L154 142 L144 146 L128 134 L112 144 L104 138 Z" fill="#FFFCF6" opacity="0.85"/>
+  <!-- озеро -->
+  <rect y="330" width="800" height="190" fill="#A9C2BC"/>
+  <rect y="330" width="800" height="190" fill="#E2A03A" opacity="0.14"/>
+  <!-- дорожка солнца на воде -->
+  <path d="M360 330 h80 l30 190 h-140 Z" fill="#F0C878" opacity="0.45"/>
+  <g fill="#FBF4E8" opacity="0.5">
+    <rect x="330" y="360" width="140" height="5" rx="2.5"/>
+    <rect x="350" y="395" width="100" height="5" rx="2.5"/>
+    <rect x="315" y="430" width="170" height="5" rx="2.5"/>
+    <rect x="345" y="465" width="110" height="5" rx="2.5"/>
+  </g>
+  <!-- лодка -->
+  <g>
+    <path d="M600 420 q35 26 70 0 l-8 18 h-54 Z" fill="#6B523F"/>
+    <rect x="632" y="386" width="5" height="36" fill="#6B523F"/>
+    <path d="M637 388 l26 20 h-26 Z" fill="#FBF4E8"/>
+  </g>
+  <!-- берег -->
+  <path d="M0 520 Q200 495 420 515 T800 508 L800 600 L0 600 Z" fill="#E0CBA6"/>
+  <!-- юрта -->
+  <g>
+    <path d="M110 512 a52 30 0 0 1 104 0 Z" fill="#FBF4E8"/>
+    <path d="M110 512 a52 30 0 0 1 104 0" fill="none" stroke="#C96F4A" stroke-width="5"/>
+    <rect x="106" y="512" width="112" height="34" rx="8" fill="#FFFCF6"/>
+    <path d="M106 522 h112 M106 534 h112" stroke="#C96F4A" stroke-width="4" opacity="0.7"/>
+    <rect x="148" y="516" width="28" height="30" rx="4" fill="#8A5A38"/>
+  </g>
+  <!-- камни и трава -->
+  <g>
+    <circle cx="620" cy="545" r="12" fill="#B8A184"/>
+    <circle cx="648" cy="552" r="8" fill="#A98F70"/>
+    <path d="M700 540 q4 -18 8 0 M712 542 q4 -16 8 0 M724 541 q4 -18 8 0" stroke="#7C9070" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M40 560 q4 -18 8 0 M52 562 q4 -16 8 0" stroke="#7C9070" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

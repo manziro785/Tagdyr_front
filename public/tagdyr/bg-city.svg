@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <!-- вечернее небо -->
+  <rect width="800" height="600" fill="#EFD9BC"/>
+  <rect width="800" height="240" fill="#F3E4CC"/>
+  <circle cx="160" cy="110" r="46" fill="#EFBE63"/>
+  <!-- горы на горизонте -->
+  <path d="M0 250 L140 150 L260 235 L400 130 L540 240 L660 160 L800 230 L800 340 L0 340 Z" fill="#C1946A" opacity="0.45"/>
+  <!-- дальние дома -->
+  <g fill="#B08A5E" opacity="0.6">
+    <rect x="40" y="290" width="90" height="180" rx="6"/>
+    <rect x="300" y="270" width="80" height="200" rx="6"/>
+    <rect x="560" y="285" width="95" height="185" rx="6"/>
+  </g>
+  <!-- ближние дома -->
+  <rect x="90" y="330" width="130" height="230" rx="8" fill="#8A745A"/>
+  <rect x="250" y="310" width="120" height="250" rx="8" fill="#6B523F"/>
+  <rect x="400" y="345" width="140" height="215" rx="8" fill="#8A745A"/>
+  <rect x="580" y="320" width="130" height="240" rx="8" fill="#6B523F"/>
+  <!-- тёплые окна -->
+  <g fill="#F0C878">
+    <rect x="105" y="350" width="22" height="18" rx="3"/><rect x="140" y="350" width="22" height="18" rx="3"/><rect x="175" y="350" width="22" height="18" rx="3"/>
+    <rect x="105" y="385" width="22" height="18" rx="3" opacity="0.5"/><rect x="140" y="385" width="22" height="18" rx="3"/><rect x="175" y="385" width="22" height="18" rx="3" opacity="0.35"/>
+    <rect x="105" y="420" width="22" height="18" rx="3"/><rect x="140" y="420" width="22" height="18" rx="3" opacity="0.4"/><rect x="175" y="420" width="22" height="18" rx="3"/>
+    <rect x="265" y="330" width="20" height="16" rx="3"/><rect x="298" y="330" width="20" height="16" rx="3" opacity="0.45"/><rect x="331" y="330" width="20" height="16" rx="3"/>
+    <rect x="265" y="362" width="20" height="16" rx="3" opacity="0.5"/><rect x="298" y="362" width="20" height="16" rx="3"/><rect x="331" y="362" width="20" height="16" rx="3" opacity="0.4"/>
+    <rect x="265" y="394" width="20" height="16" rx="3"/><rect x="298" y="394" width="20" height="16" rx="3" opacity="0.6"/><rect x="331" y="394" width="20" height="16" rx="3"/>
+    <rect x="415" y="365" width="22" height="18" rx="3"/><rect x="450" y="365" width="22" height="18" rx="3" opacity="0.5"/><rect x="485" y="365" width="22" height="18" rx="3"/>
+    <rect x="415" y="400" width="22" height="18" rx="3" opacity="0.4"/><rect x="450" y="400" width="22" height="18" rx="3"/><rect x="485" y="400" width="22" height="18" rx="3" opacity="0.55"/>
+    <rect x="595" y="340" width="20" height="16" rx="3"/><rect x="628" y="340" width="20" height="16" rx="3" opacity="0.5"/><rect x="661" y="340" width="20" height="16" rx="3"/>
+    <rect x="595" y="372" width="20" height="16" rx="3" opacity="0.45"/><rect x="628" y="372" width="20" height="16" rx="3"/><rect x="661" y="372" width="20" height="16" rx="3" opacity="0.4"/>
+  </g>
+  <!-- деревья двора -->
+  <g>
+    <circle cx="230" cy="520" r="34" fill="#7C9070"/>
+    <rect x="225" y="530" width="10" height="30" rx="4" fill="#6E5944"/>
+    <circle cx="545" cy="528" r="30" fill="#5F7457"/>
+    <rect x="540" y="536" width="10" height="28" rx="4" fill="#6E5944"/>
+  </g>
+  <!-- маршрутка -->
+  <g>
+    <rect x="330" y="510" width="120" height="46" rx="12" fill="#FBF4E8"/>
+    <rect x="342" y="518" width="26" height="18" rx="4" fill="#9DBAC9" opacity="0.8"/>
+    <rect x="374" y="518" width="26" height="18" rx="4" fill="#9DBAC9" opacity="0.8"/>
+    <rect x="406" y="518" width="26" height="18" rx="4" fill="#9DBAC9" opacity="0.8"/>
+    <circle cx="356" cy="558" r="9" fill="#4A372A"/>
+    <circle cx="424" cy="558" r="9" fill="#4A372A"/>
+    <rect x="330" y="540" width="120" height="8" fill="#E2A03A"/>
+  </g>
+  <!-- дорога -->
+  <rect y="565" width="800" height="35" fill="#C9B490"/>
+</svg>
