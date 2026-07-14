@@ -143,8 +143,15 @@ export interface CardsCollection {
   items: (KnowledgeCard & { unlockedAt: string | null })[];
 }
 
+/**
+ * Ростер с сервера содержит только игровые поля (characterSchema бэкенда);
+ * витрина place/trait/accent живёт в локальном контенте — брать через
+ * getCharacter(item.id). Гостевой localApi отдаёт надмножество — совместимо.
+ */
 export interface CharactersRoster {
-  items: (Character & { unlocked: boolean })[];
+  items: (Omit<Character, "place" | "trait" | "accent"> & {
+    unlocked: boolean;
+  })[];
 }
 
 // ── compare ─────────────────────────────────────────────────────────────────

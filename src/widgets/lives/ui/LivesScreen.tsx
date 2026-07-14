@@ -228,9 +228,11 @@ export function LivesScreen() {
 
         <div className="flex gap-2.5">
           {(roster?.items ?? []).map((ch) => {
+            // сервер отдаёт только игровые поля; витрина — из локального контента
+            const display = getCharacter(ch.id);
             const locked = !ch.unlocked;
             const selected = selectedChar === ch.id;
-            const accent = ACCENT[ch.accent];
+            const accent = ACCENT[display?.accent ?? "amber"];
             return (
               <button
                 key={ch.id}
@@ -255,7 +257,7 @@ export function LivesScreen() {
                   {ch.name}
                 </span>
                 <span className="-mt-[3px] text-[10.5px] font-semibold text-tg-muted">
-                  {ch.place}
+                  {display?.place}
                 </span>
                 <span className="flex w-full flex-col items-center gap-1">
                   <span className="inline-flex items-center gap-[3px] rounded-full bg-tg-amber-tint px-2 py-[3px] text-[10.5px] font-extrabold whitespace-nowrap text-tg-amber-deep">
@@ -271,7 +273,7 @@ export function LivesScreen() {
                       className="inline-flex items-center rounded-full px-2 py-[3px] text-[10.5px] font-extrabold whitespace-nowrap"
                       style={{ color: accent.c, background: accent.bg }}
                     >
-                      {ch.trait}
+                      {display?.trait}
                     </span>
                   )}
                 </span>
