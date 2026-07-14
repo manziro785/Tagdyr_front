@@ -36,6 +36,11 @@ export interface AuthResponse extends TokenPair {
   user: Me;
 }
 
+/** POST /auth/google — ID-токен из Google Identity Services. */
+export interface GoogleAuthRequest {
+  idToken: string;
+}
+
 // ── lives ───────────────────────────────────────────────────────────────────
 
 export interface LifeSummary {

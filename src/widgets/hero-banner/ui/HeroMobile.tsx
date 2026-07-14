@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 
 import { Avatar } from "./Avatar";
+import { HeroSlideshow } from "./HeroSlideshow";
 
 const CHIPLETS: {
   icon: LucideIcon;
@@ -29,14 +30,7 @@ const CHIPLETS: {
 export default function HeroMobile() {
   return (
     <section className="relative flex min-h-[88svh] flex-col overflow-hidden font-sans text-tg-brown lg:hidden">
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <img
-          src="/tagdyr/bg-valley.png"
-          alt=""
-          className="absolute -inset-[4%] size-[108%] object-cover blur-[6px] saturate-[1.04] brightness-[1.02]"
-        />
-        <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(245,235,221,0.3)_0%,rgba(244,233,216,0.24)_30%,rgba(243,229,208,0.55)_70%,rgba(238,222,198,0.9)_100%)]" />
-      </div>
+      <HeroSlideshow />
 
       <div className="relative z-[2] flex items-center justify-between px-[22px] pt-4">
         <span className="font-display text-[22px] font-bold tracking-[-0.5px] text-tg-brown">

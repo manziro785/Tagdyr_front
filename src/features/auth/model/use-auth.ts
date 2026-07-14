@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 
-import type { AuthResponse } from "@/entities/game/api/types";
+import type { AuthResponse, GoogleAuthRequest } from "@/entities/game/api/types";
 import { useAuthStore } from "@/entities/session/model/auth-store";
 import { api } from "@/shared/ui/api/axiosInstance";
 
@@ -21,6 +21,7 @@ export interface RegisterInput extends LoginInput {
 export function authErrorMessage(error: unknown): string {
   if (isAxiosError(error)) {
     if (error.response?.status === 401) return "Неверная почта или пароль.";
+    if (error.response?.status === 404) return "Вход через Google пока не подключён на сервере.";
     if (error.response?.status === 409) return "Эта почта уже зарегистрирована — попробуй войти.";
     if (error.response?.status === 422) return "Проверь поля: почта настоящая, пароль от 8 символов.";
     if (!error.response) return "Сервер не отвечает. Можно зайти гостем — прогресс сохранится в браузере.";
@@ -47,6 +48,27 @@ export function useRegister() {
   return useMutation({
     mutationFn: async (body: RegisterInput) =>
       (await api.post<AuthResponse>("/auth/register", body)).data,
+    onSuccess: (auth) => {
+      signIn(auth);
+      router.push("/lives");
+    },
+  });
+}
+
+/**
+ * Вход через Google: GIS-кнопка отдаёт ID-токен, бэкенд проверяет его
+ * подпись у Google и выдаёт нашу пару токенов (POST /auth/google).
+ */
+export function useGoogleAuth() {
+  const signIn = useAuthStore((s) => s.signIn);
+  const router = useRouter();
+  return useMutation({
+    mutationFn: async (idToken: string) =>
+      (
+        await api.post<AuthResponse>("/auth/google", {
+          idToken,
+        } satisfies GoogleAuthRequest)
+      ).data,
     onSuccess: (auth) => {
       signIn(auth);
       router.push("/lives");

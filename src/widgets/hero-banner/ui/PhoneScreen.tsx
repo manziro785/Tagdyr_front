@@ -166,9 +166,9 @@ export function PhoneScreen() {
     <div className="relative flex h-[844px] w-[390px] flex-col bg-[#ECDDC2] text-tg-brown antialiased">
       <div className="absolute inset-0 overflow-hidden">
         <img
-          src="/tagdyr/bg-campus.png"
+          src="/tagdyr/blur/campus.jpg"
           alt=""
-          className="absolute -inset-[7%] size-[114%] scale-[1.03] object-cover blur-[7px] saturate-[1.04] brightness-[1.02]"
+          className="absolute inset-0 size-full object-cover"
         />
         <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(245,235,221,0.34)_0%,rgba(244,233,216,0.28)_34%,rgba(243,229,208,0.6)_74%,rgba(238,222,198,0.86)_100%)]" />
       </div>

@@ -8,12 +8,14 @@ import {
   MapPin,
   Quote,
   Sparkles,
+  Target,
   X,
 } from "lucide-react";
 import Link from "next/link";
 
 import { ageStage, getSeason } from "@/entities/game/content/seasons";
 import { getCharacter } from "@/entities/game/content/characters";
+import { getSeasonGoal } from "@/entities/game/content/goals";
 import { choiceAvailable } from "@/entities/game/model/engine";
 import {
   runCurrentEvent,
@@ -120,6 +122,7 @@ export function TurnView({ run }: { run: RunState }) {
 
   const season = getSeason(run.season);
   const character = getCharacter(run.characterId);
+  const goal = getSeasonGoal(run.season);
   const event = runCurrentEvent(run);
   const engineState = {
     characterId: run.characterId,
@@ -190,11 +193,19 @@ export function TurnView({ run }: { run: RunState }) {
         </div>
         {header}
         <StatsRow stats={run.stats} className="px-[18px] pt-3" />
+        {goal && (
+          <div className="px-[18px] pt-2.5">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/45 px-3 py-1.5 text-[11.5px] font-bold text-tg-brown-2">
+              <Target size={12} strokeWidth={2.4} className="text-tg-amber-deep" />
+              Цель сезона: {goal.text}
+            </span>
+          </div>
+        )}
         <div className="flex flex-1 flex-col gap-3 px-[18px] pt-3.5 pb-6">{eventBlock}</div>
       </div>
 
       {/* десктоп: сцена слева, панель справа (MainDesktop из макета) */}
-      <div className="relative z-[1] hidden min-h-dvh lg:grid lg:grid-cols-[440px_1fr]">
+      <div className="relative z-[1] mx-auto hidden min-h-dvh w-full max-w-[1200px] lg:grid lg:grid-cols-[420px_1fr]">
         <div className="flex flex-col items-center justify-center gap-[18px] p-8">
           <GameAvatar size={210} age={run.age} mood={run.stats.mood} />
           <div className="flex flex-col items-center gap-1">
@@ -205,6 +216,15 @@ export function TurnView({ run }: { run: RunState }) {
               <MapPin size={13} strokeWidth={2.2} /> {season.place} · {ageStage(run.age)}
             </span>
           </div>
+          {goal && (
+            <div className="flex max-w-[300px] flex-col gap-1 rounded-2xl border border-white/60 bg-white/50 px-4 py-3 text-center">
+              <span className="inline-flex items-center justify-center gap-1.5 font-display text-[11px] font-bold tracking-[0.6px] text-tg-amber-deep uppercase">
+                <Target size={13} strokeWidth={2.4} /> Цель сезона
+              </span>
+              <span className="text-[14px] font-bold text-tg-brown">{goal.text}</span>
+              <span className="text-[11.5px] font-semibold text-tg-muted">{goal.hint}</span>
+            </div>
+          )}
           <span className="font-mono text-[11px] text-tg-muted opacity-80">
             сезон {run.season} · ход {Math.min(run.turn + 1, season.turns)}/{season.turns} · seed{" "}
             {run.baseSeed.slice(0, 6)}

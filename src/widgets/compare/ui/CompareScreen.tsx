@@ -13,17 +13,22 @@ import { formatMoney, moneyPct } from "@/entities/game/ui/stats";
 import { BottomNav } from "@/widgets/game-nav/BottomNav";
 import { cn } from "@/lib/utils";
 
-/** Человекочитаемый ответ на ключевую развилку: текст выбора из контента. */
 function decisionText(eventCode: string, choiceId: string): string | null {
   const event = ALL_EVENTS.find((e) => e.code === eventCode);
   const choice = event?.choices.find((c) => c.id === choiceId);
   return choice ? choice.text : null;
 }
 
-/** «В жизни А уехал в Москву, в Б открыл точку на Дордое» — разные ответы на одну развилку. */
-function keyDifferences(a: CompareLife, b: CompareLife): { question: string; a: string; b: string }[] {
+function keyDifferences(
+  a: CompareLife,
+  b: CompareLife,
+): { question: string; a: string; b: string }[] {
   const decisionsOf = (life: CompareLife) =>
-    new Map(life.seasons.flatMap((s) => s.keyDecisions.map((d) => [d.code, d.choice] as const)));
+    new Map(
+      life.seasons.flatMap((s) =>
+        s.keyDecisions.map((d) => [d.code, d.choice] as const),
+      ),
+    );
   const da = decisionsOf(a);
   const db = decisionsOf(b);
 
@@ -34,7 +39,8 @@ function keyDifferences(a: CompareLife, b: CompareLife): { question: string; a: 
     const event = ALL_EVENTS.find((e) => e.code === code);
     const textA = decisionText(code, choiceA);
     const textB = decisionText(code, choiceB);
-    if (event && textA && textB) out.push({ question: event.kicker, a: textA, b: textB });
+    if (event && textA && textB)
+      out.push({ question: event.kicker, a: textA, b: textB });
   }
   return out.slice(0, 4);
 }
@@ -42,14 +48,36 @@ function keyDifferences(a: CompareLife, b: CompareLife): { question: string; a: 
 function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
   const ch = getCharacter(life.characterId);
   const ending = life.endingCode ? getEnding(life.endingCode) : null;
-  const lastIndex = [...life.seasons].reverse().find((s) => s.lifeIndex !== null)?.lifeIndex;
+  const lastIndex = [...life.seasons]
+    .reverse()
+    .find((s) => s.lifeIndex !== null)?.lifeIndex;
   const age = life.seasons[life.seasons.length - 1]?.age;
 
   const bars = [
-    { label: "Деньги", pct: moneyPct(life.currentStats.money), color: "var(--color-tg-amber)", value: `${formatMoney(life.currentStats.money)} с` },
-    { label: "Энергия", pct: life.currentStats.energy, color: "var(--color-tg-terracotta)", value: `${Math.round(life.currentStats.energy)}%` },
-    { label: "Настроение", pct: life.currentStats.mood, color: "var(--color-tg-sage)", value: `${Math.round(life.currentStats.mood)}%` },
-    { label: "Отношения", pct: life.currentStats.relationships, color: "var(--color-tg-rose)", value: `${Math.round(life.currentStats.relationships)}%` },
+    {
+      label: "Деньги",
+      pct: moneyPct(life.currentStats.money),
+      color: "var(--color-tg-amber)",
+      value: `${formatMoney(life.currentStats.money)} с`,
+    },
+    {
+      label: "Энергия",
+      pct: life.currentStats.energy,
+      color: "var(--color-tg-terracotta)",
+      value: `${Math.round(life.currentStats.energy)}%`,
+    },
+    {
+      label: "Настроение",
+      pct: life.currentStats.mood,
+      color: "var(--color-tg-sage)",
+      value: `${Math.round(life.currentStats.mood)}%`,
+    },
+    {
+      label: "Отношения",
+      pct: life.currentStats.relationships,
+      color: "var(--color-tg-rose)",
+      value: `${Math.round(life.currentStats.relationships)}%`,
+    },
   ];
 
   return (
@@ -58,15 +86,26 @@ function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
         <span className="rounded-full bg-tg-line-soft px-2 py-0.5 font-mono text-[10px] font-bold text-tg-muted uppercase">
           жизнь {side === "a" ? "А" : "Б"}
         </span>
-        <GameAvatar size={56} age={age ?? 17} mood={life.currentStats.mood} breathe={false} />
-        <span className="font-display text-[15px] font-bold text-tg-brown">{ch?.name}</span>
+        <GameAvatar
+          size={56}
+          age={age ?? 17}
+          mood={life.currentStats.mood}
+          breathe={false}
+        />
+        <span className="font-display text-[15px] font-bold text-tg-brown">
+          {ch?.name}
+        </span>
         <span
           className={cn(
             "rounded-full px-2.5 py-1 text-[10.5px] font-extrabold",
-            ending ? "bg-tg-amber-tint text-tg-amber-deep" : "bg-tg-line-soft text-tg-muted",
+            ending
+              ? "bg-tg-amber-tint text-tg-amber-deep"
+              : "bg-tg-line-soft text-tg-muted",
           )}
         >
-          {ending ? `«${ending.title}»` : `сезон ${life.currentSeason} · в пути`}
+          {ending
+            ? `«${ending.title}»`
+            : `сезон ${life.currentSeason} · в пути`}
         </span>
         {lastIndex != null && (
           <span className="text-[11px] font-bold text-tg-muted">
@@ -82,7 +121,10 @@ function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
               <span>{b.value}</span>
             </div>
             <span className="block h-[6px] overflow-hidden rounded bg-tg-track">
-              <i className="block h-full rounded" style={{ width: `${b.pct}%`, background: b.color }} />
+              <i
+                className="block h-full rounded"
+                style={{ width: `${b.pct}%`, background: b.color }}
+              />
             </span>
           </div>
         ))}
@@ -98,14 +140,19 @@ export function CompareScreen() {
   const { data: cmp, isLoading } = useCompare(aId, bId);
 
   const candidates = (lives ?? []).filter((l) => l.status !== "archived");
-  const playHref = candidates.length > 0 ? `/play/${candidates[0]!.id}` : "/lives";
+  const playHref =
+    candidates.length > 0 ? `/play/${candidates[0]!.id}` : "/lives";
   const diffs = cmp ? keyDifferences(cmp.a, cmp.b) : [];
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)]">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:max-w-none lg:min-h-full">
       <header className="px-5 pt-5">
         <h1 className="m-0 inline-flex items-center gap-2 font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown">
-          <GitCompareArrows size={22} strokeWidth={2.2} className="text-tg-amber-deep" />
+          <GitCompareArrows
+            size={22}
+            strokeWidth={2.2}
+            className="text-tg-amber-deep"
+          />
           Две судьбы
         </h1>
         <p className="mt-0.5 text-[13px] font-semibold text-tg-muted">
@@ -116,8 +163,8 @@ export function CompareScreen() {
       <div className="flex flex-1 flex-col gap-4 px-5 pt-4 pb-6">
         {candidates.length < 2 ? (
           <div className="rounded-2xl border border-dashed border-tg-line bg-[rgba(251,244,232,0.5)] p-5 text-center text-[13.5px] font-bold text-tg-muted">
-            Для сравнения нужны хотя бы две жизни. Проживи ещё одну — интересно же, как
-            могло сложиться иначе.
+            Для сравнения нужны хотя бы две жизни. Проживи ещё одну — интересно
+            же, как могло сложиться иначе.
           </div>
         ) : (
           <div className="flex flex-col gap-2">
@@ -139,7 +186,9 @@ export function CompareScreen() {
                           key={l.id}
                           type="button"
                           disabled={disabled}
-                          onClick={() => (side === "a" ? setAId(l.id) : setBId(l.id))}
+                          onClick={() =>
+                            side === "a" ? setAId(l.id) : setBId(l.id)
+                          }
                           className={cn(
                             "cursor-pointer rounded-full border px-3 py-1.5 text-[12px] font-extrabold transition-colors",
                             active
@@ -161,7 +210,9 @@ export function CompareScreen() {
         )}
 
         {isLoading && aId && bId && (
-          <div className="p-6 text-center text-sm font-bold text-tg-muted">Сравниваю судьбы…</div>
+          <div className="p-6 text-center text-sm font-bold text-tg-muted">
+            Сравниваю судьбы…
+          </div>
         )}
 
         {cmp && (
@@ -174,8 +225,11 @@ export function CompareScreen() {
             {diffs.length > 0 && (
               <section>
                 <span className="mb-2 inline-flex items-center gap-1.5 font-display text-[15px] font-semibold text-tg-brown">
-                  <Sparkles size={14} className="fill-tg-amber-deep stroke-none" /> Где дороги
-                  разошлись
+                  <Sparkles
+                    size={14}
+                    className="fill-tg-amber-deep stroke-none"
+                  />{" "}
+                  Где дороги разошлись
                 </span>
                 <div className="flex flex-col gap-2">
                   {diffs.map((d, i) => (
@@ -188,10 +242,16 @@ export function CompareScreen() {
                       </p>
                       <div className="mt-1.5 flex flex-col gap-1 text-[12.5px] leading-snug font-semibold">
                         <p className="m-0 text-tg-brown">
-                          <span className="font-mono text-[10px] text-tg-muted">А</span> {d.a}
+                          <span className="font-mono text-[10px] text-tg-muted">
+                            А
+                          </span>{" "}
+                          {d.a}
                         </p>
                         <p className="m-0 text-tg-brown-2">
-                          <span className="font-mono text-[10px] text-tg-muted">Б</span> {d.b}
+                          <span className="font-mono text-[10px] text-tg-muted">
+                            Б
+                          </span>{" "}
+                          {d.b}
                         </p>
                       </div>
                     </div>

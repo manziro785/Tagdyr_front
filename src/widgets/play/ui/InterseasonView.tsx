@@ -11,12 +11,15 @@ import {
   PiggyBank,
   Quote,
   Smile,
+  Target,
   TrendingUp,
   Zap,
   type LucideIcon,
 } from "lucide-react";
 
+import { getSeasonGoal } from "@/entities/game/content/goals";
 import { getSeason } from "@/entities/game/content/seasons";
+import { GameFrame } from "@/widgets/game-shell/GameFrame";
 import { MAX_SEASON } from "@/entities/game/model/finance";
 import type { RunState } from "@/entities/game/model/run-store";
 import type { Stats } from "@/entities/game/model/types";
@@ -80,9 +83,12 @@ export function InterseasonView({
 
   const debt = close.timeSkip.debts.find((d) => d.after > d.before);
   const savings = close.timeSkip.savings;
+  const goal = getSeasonGoal(run.season);
+  const goalMet = goal ? goal.check(run.stats, run.debts) : null;
 
   return (
-    <div className="relative mx-auto flex min-h-dvh w-full max-w-[430px] animate-in fade-in flex-col bg-[radial-gradient(120%_55%_at_50%_-6%,#F8E4C5_0%,rgba(248,228,197,0)_60%),linear-gradient(180deg,#F3E4CC_0%,#EFD9BC_55%,#E9CFAE_100%)] duration-700">
+    <GameFrame scene={season.scene}>
+    <div className="relative mx-auto flex min-h-dvh w-full max-w-[430px] animate-in fade-in flex-col bg-[radial-gradient(120%_55%_at_50%_-6%,#F8E4C5_0%,rgba(248,228,197,0)_60%),linear-gradient(180deg,#F3E4CC_0%,#EFD9BC_55%,#E9CFAE_100%)] duration-700 lg:max-w-none lg:min-h-full">
       <div className="px-[22px] pt-6">
         <span className="inline-flex items-center gap-[5px] font-display text-[11px] font-bold tracking-[0.7px] text-tg-terra-deep uppercase">
           <Clock size={13} strokeWidth={2.2} /> Конец сезона {run.season}
@@ -126,6 +132,37 @@ export function InterseasonView({
             {close.epilogue}
           </p>
         </div>
+
+        {/* итог цели сезона */}
+        {goal && (
+          <div
+            className={
+              "flex items-center gap-3 rounded-[18px] border p-3.5 " +
+              (goalMet
+                ? "border-tg-sage/40 bg-tg-sage-tint"
+                : "border-tg-line-soft bg-tg-card")
+            }
+          >
+            <span
+              className={
+                "flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/60 " +
+                (goalMet ? "text-tg-sage-deep" : "text-tg-muted")
+              }
+            >
+              <Target size={18} strokeWidth={2.2} />
+            </span>
+            <p
+              className={
+                "m-0 text-[13px] leading-snug font-bold " +
+                (goalMet ? "text-tg-sage-deep" : "text-tg-muted")
+              }
+            >
+              {goalMet
+                ? `Цель сезона выполнена: ${goal.text.toLowerCase()}. ${goal.hint}.`
+                : `Цель «${goal.text.toLowerCase()}» не сложилась. ${goal.hint} — в следующей жизни попробуй иначе.`}
+            </p>
+          </div>
+        )}
 
         {/* сводка изменений */}
         {(statRows.length > 0 || moneyDelta !== 0 || newFlagLabels.length > 0) && (
@@ -249,6 +286,7 @@ export function InterseasonView({
         </CtaButton>
       </div>
     </div>
+    </GameFrame>
   );
 }
 

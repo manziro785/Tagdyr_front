@@ -1,44 +1,46 @@
 "use client";
 
+import { useState } from "react";
 import { ArrowRight, Check, Lock, Mail } from "lucide-react";
 import Link from "next/link";
 
 import { authErrorMessage, useGuestEntry, useLogin } from "../model/use-auth";
+import { emailError, loginPasswordError } from "../model/validation";
 import { AuthField } from "./AuthField";
+import { SocialAuth } from "./SocialAuth";
 
-/** Маленькие бренд-иконки для соц-кнопок. */
-function GoogleMark() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 18 18" aria-hidden>
-      <path fill="#EA4335" d="M9 3.48c1.32 0 2.5.45 3.44 1.35l2.54-2.54C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.95 2.29C4.6 5.07 6.62 3.48 9 3.48Z" />
-      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62Z" />
-      <path fill="#FBBC05" d="M3.91 10.7a5.4 5.4 0 0 1 0-3.45L.96 4.96a9 9 0 0 0 0 8.08l2.95-2.34Z" />
-      <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.85.86-3.04.86-2.38 0-4.4-1.6-5.12-3.76L.96 13.04C2.44 15.98 5.48 18 9 18Z" />
-    </svg>
-  );
-}
-
-function AppleMark() {
-  return (
-    <svg width="15" height="17" viewBox="0 0 15 17" fill="currentColor" aria-hidden>
-      <path d="M12.6 8.93c-.02-1.9 1.56-2.82 1.63-2.86-.89-1.3-2.27-1.48-2.76-1.5-1.18-.12-2.3.69-2.89.69-.6 0-1.51-.67-2.49-.66-1.28.02-2.46.74-3.12 1.89-1.33 2.31-.34 5.73.96 7.6.64.92 1.39 1.95 2.38 1.91.96-.04 1.32-.62 2.48-.62 1.15 0 1.48.62 2.49.6 1.03-.02 1.68-.93 2.31-1.86.73-1.06 1.03-2.1 1.04-2.15-.02-.01-2-.77-2.02-3.06ZM10.7 3.3c.53-.64.89-1.53.79-2.42-.76.03-1.69.51-2.24 1.15-.49.56-.92 1.46-.81 2.32.85.07 1.72-.43 2.26-1.05Z" />
-    </svg>
-  );
-}
+type FieldErrors = { email?: string; password?: string };
 
 /** Экран входа «Тагдыр» по дизайну из Figma. */
 export function LoginForm() {
   const login = useLogin();
   const enterAsGuest = useGuestEntry();
+  const [errors, setErrors] = useState<FieldErrors>({});
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (login.isPending) return;
     const form = new FormData(e.currentTarget);
-    login.mutate({
-      email: String(form.get("login") ?? "").trim(),
-      password: String(form.get("password") ?? ""),
-    });
+    const email = String(form.get("login") ?? "").trim();
+    const password = String(form.get("password") ?? "");
+
+    const next: FieldErrors = {
+      email: emailError(email),
+      password: loginPasswordError(password),
+    };
+    if (next.email || next.password) {
+      setErrors(next);
+      return;
+    }
+    setErrors({});
+    login.mutate({ email, password });
+  };
+
+  // ошибка поля гаснет, как только игрок начал его править
+  const onInput = (e: React.FormEvent<HTMLFormElement>) => {
+    const name = (e.target as HTMLInputElement).name;
+    if (name === "login") setErrors((p) => ({ ...p, email: undefined }));
+    if (name === "password") setErrors((p) => ({ ...p, password: undefined }));
   };
 
   return (
@@ -56,6 +58,8 @@ export function LoginForm() {
       {/* карточка */}
       <form
         onSubmit={onSubmit}
+        onInput={onInput}
+        noValidate
         className="flex flex-col gap-[13px] rounded-3xl border border-white/70 bg-[rgba(251,245,234,0.86)] p-5 shadow-[0_22px_54px_rgba(74,42,16,0.22)] backdrop-blur-xl"
       >
         <h1 className="font-display text-xl font-bold text-tg-brown">Войти</h1>
@@ -67,6 +71,7 @@ export function LoginForm() {
           name="login"
           placeholder="azamat@example.kg"
           autoComplete="username"
+          error={errors.email}
         />
 
         <AuthField
@@ -76,6 +81,7 @@ export function LoginForm() {
           name="password"
           placeholder="••••••••"
           autoComplete="current-password"
+          error={errors.password}
         />
 
         <div className="flex items-center justify-between px-0.5">
@@ -109,22 +115,7 @@ export function LoginForm() {
           или
         </div>
 
-        <div className="flex gap-2.5" title="Скоро — пока вход по почте или гостем">
-          <button
-            type="button"
-            disabled
-            className="flex flex-1 cursor-not-allowed items-center justify-center gap-2 rounded-2xl border-[1.5px] border-tg-line bg-tg-card-2 py-3 text-[13.5px] font-bold text-tg-brown opacity-50"
-          >
-            <GoogleMark /> Google
-          </button>
-          <button
-            type="button"
-            disabled
-            className="flex flex-1 cursor-not-allowed items-center justify-center gap-2 rounded-2xl border-[1.5px] border-tg-line bg-tg-card-2 py-3 text-[13.5px] font-bold text-tg-brown opacity-50"
-          >
-            <AppleMark /> Apple ID
-          </button>
-        </div>
+        <SocialAuth context="signin" />
       </form>
 
       {/* гость + футер */}

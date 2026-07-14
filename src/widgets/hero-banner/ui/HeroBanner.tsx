@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import { HeroSlideshow } from "./HeroSlideshow";
 import { PhoneScreen } from "./PhoneScreen";
 
 const NAV_LINKS = [
@@ -86,15 +87,8 @@ function FloatCard({
 
 export default function HeroDesktop() {
   return (
-    <section className="relative isolate hidden w-full overflow-hidden font-sans text-tg-brown lg:block">
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <img
-          src="/tagdyr/bg-valley.png"
-          alt=""
-          className="absolute -inset-[4%] size-[108%] scale-[1.02] object-cover blur-[6px] saturate-[1.04] brightness-[1.02]"
-        />
-        <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(245,235,221,0.3)_0%,rgba(244,233,216,0.24)_40%,rgba(243,229,208,0.55)_80%,rgba(238,222,198,0.85)_100%)]" />
-      </div>
+    <section className="relative isolate hidden min-h-dvh w-full flex-col overflow-hidden font-sans text-tg-brown lg:flex">
+      <HeroSlideshow />
 
       <nav className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-8 py-5">
         <span className="font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown">
@@ -119,7 +113,7 @@ export default function HeroDesktop() {
         </div>
       </nav>
 
-      <div className="relative z-[1] mx-auto grid w-full max-w-7xl grid-cols-[1.05fr_0.95fr] items-center gap-8 px-8 pt-10 pb-20">
+      <div className="relative z-[1] mx-auto grid w-full max-w-7xl flex-1 grid-cols-[1.05fr_0.95fr] content-center items-center gap-8 px-8 pt-10 pb-20">
         <div className="flex max-w-xl flex-col gap-[22px]">
           <span className="inline-flex items-center gap-2 self-start rounded-full border border-white/70 bg-white/55 px-3.5 py-[7px] font-display text-[12px] font-bold tracking-[1px] text-tg-terra-deep uppercase">
             <Sparkles size={12} fill="currentColor" strokeWidth={0} />

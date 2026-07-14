@@ -1,11 +1,16 @@
 import type { SeasonMeta } from "../model/types";
 
-const SCENE_SRC: Record<SeasonMeta["scene"], string> = {
-  valley: "/tagdyr/bg-valley.png",
-  campus: "/tagdyr/bg-campus.png",
-  bazaar: "/tagdyr/bg-bazaar.svg",
-  city: "/tagdyr/bg-city.svg",
-  issykkul: "/tagdyr/bg-issykkul.svg",
+/**
+ * Блюр запечён в сами JPEG (scripts готовит public/tagdyr/blur/*):
+ * рантайм-фильтр blur() на весь вьюпорт давал видимый шов тайлов GPU
+ * в Chrome и лишнюю нагрузку на перерисовку.
+ */
+export const SCENE_SRC: Record<SeasonMeta["scene"], string> = {
+  valley: "/tagdyr/blur/valley.jpg",
+  campus: "/tagdyr/blur/campus.jpg",
+  bazaar: "/tagdyr/blur/bazaar.jpg",
+  city: "/tagdyr/blur/city.jpg",
+  issykkul: "/tagdyr/blur/issykkul.jpg",
 };
 
 /**
@@ -25,7 +30,7 @@ export function SceneBackground({
       <img
         src={SCENE_SRC[scene]}
         alt=""
-        className="absolute -inset-[7%] size-[114%] scale-[1.03] object-cover blur-[7px] saturate-[1.04] brightness-[1.02] transition-opacity duration-700"
+        className="absolute inset-0 size-full object-cover transition-opacity duration-700"
       />
       <span
         className={

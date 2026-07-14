@@ -10,11 +10,12 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
     <main className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 py-10 font-sans text-tg-brown">
       {/* фон: размытая долина с юртами + тёплый скрим */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
+        {/* блюр запечён в jpg: рантайм-blur() давал GPU-шов на широких экранах */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/tagdyr/bg-valley.png"
+          src="/tagdyr/blur/valley.jpg"
           alt=""
-          className="absolute -inset-[4%] size-[108%] object-cover blur-[6px] saturate-[1.04] brightness-[1.02]"
+          className="absolute inset-0 size-full object-cover"
         />
         <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(245,235,221,0.34)_0%,rgba(244,233,216,0.28)_34%,rgba(243,229,208,0.6)_74%,rgba(238,222,198,0.86)_100%)]" />
       </div>

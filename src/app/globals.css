@@ -147,7 +147,9 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    /* кремовый фон вместо белого: страницы-«колонки» (max-w-[430px])
+       и низ лендинга не должны обнажать белый body */
+    @apply bg-tg-cream text-foreground;
   }
   html {
     @apply font-sans;

@@ -28,7 +28,10 @@ const MAX_SLOTS = 3;
 const ACCENT: Record<Character["accent"], { c: string; bg: string }> = {
   amber: { c: "var(--color-tg-amber-deep)", bg: "var(--color-tg-amber-tint)" },
   sage: { c: "var(--color-tg-sage-deep)", bg: "var(--color-tg-sage-tint)" },
-  terracotta: { c: "var(--color-tg-terra-deep)", bg: "var(--color-tg-terra-tint)" },
+  terracotta: {
+    c: "var(--color-tg-terra-deep)",
+    bg: "var(--color-tg-terra-tint)",
+  },
   rose: { c: "var(--color-tg-rose-deep)", bg: "var(--color-tg-rose-tint)" },
 };
 
@@ -42,8 +45,14 @@ function SlotBars({ life }: { life: LifeSummary }) {
   return (
     <span className="mt-px flex gap-[5px]">
       {vals.map((v, i) => (
-        <span key={i} className="h-[5px] w-[30px] overflow-hidden rounded bg-tg-track">
-          <i className="block h-full rounded" style={{ width: `${v.pct}%`, background: v.color }} />
+        <span
+          key={i}
+          className="h-[5px] w-[30px] overflow-hidden rounded bg-tg-track"
+        >
+          <i
+            className="block h-full rounded"
+            style={{ width: `${v.pct}%`, background: v.color }}
+          />
         </span>
       ))}
     </span>
@@ -69,8 +78,6 @@ export function LivesScreen() {
   );
 
   const openLife = (life: LifeSummary) => {
-    // рана в сторе может не быть (другое устройство/очищенный localStorage) —
-    // тогда сезон начнётся заново со стейта жизни; play-страница это разрулит
     router.push(`/play/${life.id}`);
   };
 
@@ -97,10 +104,11 @@ export function LivesScreen() {
     );
   };
 
-  const playHref = activeLives.length > 0 ? `/play/${activeLives[0]!.id}` : "/lives";
+  const playHref =
+    activeLives.length > 0 ? `/play/${activeLives[0]!.id}` : "/lives";
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)]">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:max-w-none lg:min-h-full">
       <header className="flex items-center justify-between px-5 pt-5">
         <span className="font-display text-[30px] font-bold tracking-[-0.5px] text-tg-brown">
           Тагдыр
@@ -123,7 +131,9 @@ export function LivesScreen() {
 
       <div className="flex flex-1 flex-col gap-[11px] px-5 pt-4 pb-5">
         <div className="flex items-baseline justify-between">
-          <span className="font-display text-[15px] font-semibold text-tg-brown">Ваши жизни</span>
+          <span className="font-display text-[15px] font-semibold text-tg-brown">
+            Ваши жизни
+          </span>
           <span className="text-xs font-bold text-tg-muted">
             {activeLives.length} из {MAX_SLOTS}
           </span>
@@ -149,7 +159,12 @@ export function LivesScreen() {
                   onClick={() => openLife(life)}
                   className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left"
                 >
-                  <GameAvatar size={50} age={life.age} mood={life.stats.mood} breathe={false} />
+                  <GameAvatar
+                    size={50}
+                    age={life.age}
+                    mood={life.stats.mood}
+                    breathe={false}
+                  />
                   <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
                     <span className="font-display text-[15.5px] font-bold text-tg-brown">
                       {ch?.name ?? "Безымянный"}, {life.age}
@@ -161,7 +176,11 @@ export function LivesScreen() {
                     </span>
                     <SlotBars life={life} />
                   </span>
-                  <ChevronRight size={20} strokeWidth={2.2} className="shrink-0 text-tg-faint" />
+                  <ChevronRight
+                    size={20}
+                    strokeWidth={2.2}
+                    className="shrink-0 text-tg-faint"
+                  />
                 </button>
                 {confirmDelete === life.id ? (
                   <button
@@ -226,7 +245,12 @@ export function LivesScreen() {
                   locked && "cursor-not-allowed opacity-60",
                 )}
               >
-                <GameAvatar size={56} age={ch.age} mood={ch.startStats.mood} breathe={selected} />
+                <GameAvatar
+                  size={56}
+                  age={ch.age}
+                  mood={ch.startStats.mood}
+                  breathe={selected}
+                />
                 <span className="font-display text-[13.5px] font-bold text-tg-brown">
                   {ch.name}
                 </span>
@@ -235,7 +259,8 @@ export function LivesScreen() {
                 </span>
                 <span className="flex w-full flex-col items-center gap-1">
                   <span className="inline-flex items-center gap-[3px] rounded-full bg-tg-amber-tint px-2 py-[3px] text-[10.5px] font-extrabold whitespace-nowrap text-tg-amber-deep">
-                    <Coins size={12} strokeWidth={2.2} /> {formatMoney(ch.startStats.money)} с
+                    <Coins size={12} strokeWidth={2.2} />{" "}
+                    {formatMoney(ch.startStats.money)} с
                   </span>
                   {locked ? (
                     <span className="inline-flex items-center gap-[3px] rounded-full bg-tg-line-soft px-2 py-[3px] text-[10.5px] font-extrabold whitespace-nowrap text-tg-muted">
@@ -258,7 +283,9 @@ export function LivesScreen() {
         <div className="mt-auto pt-2">
           <CtaButton
             onClick={startNewLife}
-            disabled={!selectedChar || freeSlots.length === 0 || createLife.isPending}
+            disabled={
+              !selectedChar || freeSlots.length === 0 || createLife.isPending
+            }
           >
             <Plus size={18} strokeWidth={2.6} />
             {freeSlots.length === 0

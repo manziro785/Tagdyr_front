@@ -39,7 +39,7 @@ export function ProfileScreen() {
     lives && lives.length > 0 ? `/play/${lives[0]!.id}` : "/lives";
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)]">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:max-w-none lg:min-h-full">
       <header className="px-5 pt-5">
         <h1 className="m-0 font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown">
           Профиль
