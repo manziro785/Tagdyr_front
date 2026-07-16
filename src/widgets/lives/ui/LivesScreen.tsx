@@ -108,8 +108,9 @@ export function LivesScreen() {
     activeLives.length > 0 ? `/play/${activeLives[0]!.id}` : "/lives";
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:max-w-none lg:min-h-full">
-      <header className="flex items-center justify-between px-5 pt-5">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:min-h-0 lg:max-w-none lg:bg-none">
+      {/* мобильная шапка: на десктопе логотип и выход живут в GameFrame */}
+      <header className="flex items-center justify-between px-5 pt-5 lg:hidden">
         <span className="font-display text-[30px] font-bold tracking-[-0.5px] text-tg-brown">
           Тагдыр
         </span>
@@ -125,13 +126,14 @@ export function LivesScreen() {
           <LogOut size={17} strokeWidth={2} />
         </button>
       </header>
-      <p className="px-5 pt-0.5 text-[13px] font-semibold text-tg-muted">
+      <p className="px-5 pt-0.5 text-[13px] font-semibold text-tg-muted lg:hidden">
         Маленькие выборы складываются в судьбу
       </p>
 
-      <div className="flex flex-1 flex-col gap-[11px] px-5 pt-4 pb-5">
+      <div className="flex flex-1 flex-col gap-[11px] px-5 pt-4 pb-5 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start lg:gap-7 lg:p-0 lg:pt-3">
+        <section className="flex flex-col gap-[11px] lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
         <div className="flex items-baseline justify-between">
-          <span className="font-display text-[15px] font-semibold text-tg-brown">
+          <span className="font-display text-[15px] font-semibold text-tg-brown lg:text-[19px]">
             Ваши жизни
           </span>
           <span className="text-xs font-bold text-tg-muted">
@@ -164,6 +166,7 @@ export function LivesScreen() {
                     age={life.age}
                     mood={life.stats.mood}
                     breathe={false}
+                    characterId={life.characterId}
                   />
                   <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
                     <span className="font-display text-[15.5px] font-bold text-tg-brown">
@@ -214,19 +217,23 @@ export function LivesScreen() {
                 <Plus size={20} strokeWidth={2.4} />
               </span>
               <span className="text-sm font-bold text-tg-muted">
-                Свободный слот — выбери старт ниже
+                Свободный слот — выбери старт{" "}
+                <span className="lg:hidden">ниже</span>
+                <span className="hidden lg:inline">справа</span>
               </span>
             </div>
           )}
         </div>
+        </section>
 
-        <div className="mt-[5px] flex items-baseline justify-between">
-          <span className="font-display text-[15px] font-semibold text-tg-brown">
+        <section className="flex flex-col gap-[11px] lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
+        <div className="mt-[5px] flex items-baseline justify-between lg:mt-0">
+          <span className="font-display text-[15px] font-semibold text-tg-brown lg:text-[19px]">
             Новая жизнь — выбери старт
           </span>
         </div>
 
-        <div className="flex gap-2.5">
+        <div className="flex gap-2.5 lg:gap-4">
           {(roster?.items ?? []).map((ch) => {
             // сервер отдаёт только игровые поля; витрина — из локального контента
             const display = getCharacter(ch.id);
@@ -240,7 +247,7 @@ export function LivesScreen() {
                 disabled={locked}
                 onClick={() => setSelectedChar(ch.id)}
                 className={cn(
-                  "flex flex-1 cursor-pointer flex-col items-center gap-[7px] rounded-2xl border p-3 pb-[13px] text-center transition-all",
+                  "flex flex-1 cursor-pointer flex-col items-center gap-[7px] rounded-2xl border p-3 pb-[13px] text-center transition-all lg:gap-2.5 lg:p-5",
                   selected
                     ? "border-tg-amber bg-tg-card-2 shadow-[0_6px_18px_rgba(214,160,60,0.25)]"
                     : "border-tg-line-soft bg-tg-card",
@@ -252,6 +259,16 @@ export function LivesScreen() {
                   age={ch.age}
                   mood={ch.startStats.mood}
                   breathe={selected}
+                  characterId={ch.id}
+                  className="lg:hidden"
+                />
+                <GameAvatar
+                  size={92}
+                  age={ch.age}
+                  mood={ch.startStats.mood}
+                  breathe={selected}
+                  characterId={ch.id}
+                  className="hidden lg:flex"
                 />
                 <span className="font-display text-[13.5px] font-bold text-tg-brown">
                   {ch.name}
@@ -265,8 +282,8 @@ export function LivesScreen() {
                     {formatMoney(ch.startStats.money)} с
                   </span>
                   {locked ? (
-                    <span className="inline-flex items-center gap-[3px] rounded-full bg-tg-line-soft px-2 py-[3px] text-[10.5px] font-extrabold whitespace-nowrap text-tg-muted">
-                      <Lock size={11} strokeWidth={2.4} /> за концовку «Опора»
+                    <span className="inline-flex items-center gap-[3px] rounded-full bg-tg-line-soft px-2 py-[3px] text-[10.5px] font-extrabold text-tg-muted">
+                      <Lock size={11} strokeWidth={2.4} className="shrink-0" /> за концовку «Опора»
                     </span>
                   ) : (
                     <span
@@ -302,6 +319,7 @@ export function LivesScreen() {
             </p>
           )}
         </div>
+        </section>
       </div>
 
       <BottomNav playHref={playHref} />

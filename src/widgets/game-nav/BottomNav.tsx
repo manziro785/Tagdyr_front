@@ -15,7 +15,7 @@ const ITEMS = [
 export function BottomNav({ playHref = "/lives" }: { playHref?: string }) {
   const pathname = usePathname() ?? "";
   return (
-    <nav className="sticky bottom-0 z-20 mt-auto flex h-[60px] shrink-0 items-center justify-around border-t border-tg-line-soft bg-tg-card-2">
+    <nav className="sticky bottom-0 z-20 mt-auto flex h-[60px] shrink-0 items-center justify-around border-t border-tg-line-soft bg-tg-card-2 lg:hidden">
       {ITEMS.map(({ href, label, icon: Icon }) => {
         const target = href === "/play" ? playHref : href;
         const active =

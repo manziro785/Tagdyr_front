@@ -39,20 +39,20 @@ export function ProfileScreen() {
     lives && lives.length > 0 ? `/play/${lives[0]!.id}` : "/lives";
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:max-w-none lg:min-h-full">
-      <header className="px-5 pt-5">
-        <h1 className="m-0 font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:min-h-0 lg:max-w-none lg:bg-none">
+      <header className="px-5 pt-5 lg:px-0 lg:pt-3">
+        <h1 className="m-0 font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown lg:text-[32px]">
           Профиль
         </h1>
-        <p className="mt-0.5 text-[13px] font-semibold text-tg-muted">
+        <p className="mt-0.5 text-[13px] font-semibold text-tg-muted lg:text-[14px]">
           {mode === "user" ? (user?.displayName ?? "Игрок") : "Гость"} · коллекция собирается за
           несколько жизней
         </p>
       </header>
 
-      <div className="flex flex-1 flex-col gap-5 px-5 pt-4 pb-6">
+      <div className="flex flex-1 flex-col gap-5 px-5 pt-4 pb-6 lg:px-0">
         {/* галерея концовок */}
-        <section>
+        <section className="lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
           <div className="mb-2.5 flex items-baseline justify-between">
             <span className="inline-flex items-center gap-1.5 font-display text-[15px] font-semibold text-tg-brown">
               <Trophy size={15} strokeWidth={2.3} className="text-tg-amber-deep" /> Концовки
@@ -61,7 +61,7 @@ export function ProfileScreen() {
               открыто {endings?.unlocked ?? 0} из {endings?.total ?? "…"}
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4 lg:gap-3.5">
             {(endings?.items ?? []).map((e) => {
               const locked = !e.unlockedAt;
               return (
@@ -106,7 +106,7 @@ export function ProfileScreen() {
         </section>
 
         {/* коллекция карточек знаний */}
-        <section>
+        <section className="lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
           <div className="mb-2.5 flex items-baseline justify-between">
             <span className="inline-flex items-center gap-1.5 font-display text-[15px] font-semibold text-tg-brown">
               <BookOpen size={15} strokeWidth={2.3} className="text-tg-sage-deep" /> Карточки знаний
@@ -115,7 +115,7 @@ export function ProfileScreen() {
               собрано {cards?.unlocked ?? 0} из {cards?.total ?? "…"}
             </span>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3">
             {(cards?.items ?? []).map((card) => {
               const locked = !card.unlockedAt;
               return (

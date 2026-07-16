@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 import { getSeasonGoal } from "@/entities/game/content/goals";
-import { getSeason } from "@/entities/game/content/seasons";
+import { getSeason, sceneForRun } from "@/entities/game/content/seasons";
 import { GameFrame } from "@/widgets/game-shell/GameFrame";
 import { MAX_SEASON } from "@/entities/game/model/finance";
 import type { RunState } from "@/entities/game/model/run-store";
@@ -87,21 +87,28 @@ export function InterseasonView({
   const goalMet = goal ? goal.check(run.stats, run.debts) : null;
 
   return (
-    <GameFrame scene={season.scene}>
-    <div className="relative mx-auto flex min-h-dvh w-full max-w-[430px] animate-in fade-in flex-col bg-[radial-gradient(120%_55%_at_50%_-6%,#F8E4C5_0%,rgba(248,228,197,0)_60%),linear-gradient(180deg,#F3E4CC_0%,#EFD9BC_55%,#E9CFAE_100%)] duration-700 lg:max-w-none lg:min-h-full">
-      <div className="px-[22px] pt-6">
+    <GameFrame scene={sceneForRun(season, run.baseSeed)}>
+    <div className="relative mx-auto flex min-h-dvh w-full max-w-[430px] animate-in fade-in flex-col bg-[radial-gradient(120%_55%_at_50%_-6%,#F8E4C5_0%,rgba(248,228,197,0)_60%),linear-gradient(180deg,#F3E4CC_0%,#EFD9BC_55%,#E9CFAE_100%)] duration-700 lg:min-h-0 lg:max-w-none lg:bg-none">
+      <div className="lg:flex lg:items-end lg:justify-between lg:pt-3 lg:pb-4">
+      <div className="px-[22px] pt-6 lg:p-0">
         <span className="inline-flex items-center gap-[5px] font-display text-[11px] font-bold tracking-[0.7px] text-tg-terra-deep uppercase">
           <Clock size={13} strokeWidth={2.2} /> Конец сезона {run.season}
         </span>
-        <h2 className="mt-1 font-display text-[25px] font-bold tracking-[-0.5px] text-tg-brown">
+        <h2 className="mt-1 font-display text-[25px] font-bold tracking-[-0.5px] text-tg-brown lg:text-[32px] lg:[text-shadow:0_1px_10px_rgba(250,240,224,0.6)]">
           {season.title} — этап позади
         </h2>
       </div>
 
       {/* взросление */}
-      <div className="flex items-center justify-center gap-4 px-[22px] pt-4 pb-1.5">
+      <div className="flex items-center justify-center gap-4 px-[22px] pt-4 pb-1.5 lg:p-0">
         <div className="flex flex-col items-center gap-[7px]">
-          <GameAvatar size={64} age={run.age} mood={run.stats.mood} breathe={false} />
+          <GameAvatar
+            size={64}
+            age={run.age}
+            mood={run.stats.mood}
+            breathe={false}
+            characterId={run.characterId}
+          />
           <span className="text-[11px] font-bold text-tg-muted">{run.age}</span>
         </div>
         <div className="flex flex-col items-center gap-0.5 text-[10px] font-extrabold text-tg-terra-deep opacity-85">
@@ -117,14 +124,17 @@ export function InterseasonView({
             size={78}
             age={close.next?.age ?? run.age + close.timeSkip.years}
             mood={run.stats.mood}
+            characterId={run.characterId}
           />
           <span className="text-[11px] font-bold text-tg-brown">
             {close.next?.age ?? run.age + close.timeSkip.years}
           </span>
         </div>
       </div>
+      </div>
 
-      <div className="flex flex-1 flex-col gap-[13px] px-5 pt-3 pb-6">
+      <div className="flex flex-1 flex-col gap-[13px] px-5 pt-3 pb-6 lg:grid lg:grid-cols-2 lg:items-start lg:gap-7 lg:p-0">
+      <div className="contents lg:flex lg:flex-col lg:gap-[13px] lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.8)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
         {/* эпилог-дневник */}
         <div className="relative rounded-[18px] border border-tg-line-soft bg-tg-card-2 p-4 shadow-[0_6px_18px_rgba(110,70,30,0.06)]">
           <Quote size={24} className="mb-1.5 fill-tg-amber stroke-none opacity-50" />
@@ -164,6 +174,9 @@ export function InterseasonView({
           </div>
         )}
 
+      </div>
+
+      <div className="contents lg:flex lg:flex-col lg:gap-[13px] lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.8)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
         {/* сводка изменений */}
         {(statRows.length > 0 || moneyDelta !== 0 || newFlagLabels.length > 0) && (
           <>
@@ -276,7 +289,13 @@ export function InterseasonView({
           </div>
         )}
 
-        <CtaButton onClick={onContinue} disabled={continuing} className="mt-auto">
+      </div>
+
+        <CtaButton
+          onClick={onContinue}
+          disabled={continuing}
+          className="mt-auto lg:col-span-2 lg:mx-auto lg:mt-2 lg:max-w-[400px]"
+        >
           {continuing
             ? "Минутку…"
             : isFinal

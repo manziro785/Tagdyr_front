@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import { ageStage, getSeason } from "@/entities/game/content/seasons";
+import { ageStage, getSeason, sceneForRun } from "@/entities/game/content/seasons";
 import { getCharacter } from "@/entities/game/content/characters";
 import { getSeasonGoal } from "@/entities/game/content/goals";
 import { choiceAvailable } from "@/entities/game/model/engine";
@@ -135,7 +135,7 @@ export function TurnView({ run }: { run: RunState }) {
 
   const header = (
     <div className="flex items-center gap-3 px-1">
-      <GameAvatar size={62} age={run.age} mood={run.stats.mood} />
+      <GameAvatar size={62} age={run.age} mood={run.stats.mood} characterId={run.characterId} />
       <div className="min-w-0 flex-1">
         <div className="font-display text-lg font-bold tracking-[-0.2px] text-tg-brown">
           {character?.name}, {run.age}
@@ -178,7 +178,7 @@ export function TurnView({ run }: { run: RunState }) {
 
   return (
     <div className="relative mx-auto flex min-h-dvh w-full flex-col overflow-hidden lg:max-w-none">
-      <SceneBackground scene={season.scene} />
+      <SceneBackground scene={sceneForRun(season, run.baseSeed)} />
 
       {/* мобильная раскладка: вариант C+ «Дневник с фоном» */}
       <div className="relative z-[1] mx-auto flex min-h-dvh w-full max-w-[430px] flex-col lg:hidden">
@@ -207,7 +207,7 @@ export function TurnView({ run }: { run: RunState }) {
       {/* десктоп: сцена слева, панель справа (MainDesktop из макета) */}
       <div className="relative z-[1] mx-auto hidden min-h-dvh w-full max-w-[1200px] lg:grid lg:grid-cols-[420px_1fr]">
         <div className="flex flex-col items-center justify-center gap-[18px] p-8">
-          <GameAvatar size={210} age={run.age} mood={run.stats.mood} />
+          <GameAvatar size={210} age={run.age} mood={run.stats.mood} characterId={run.characterId} />
           <div className="flex flex-col items-center gap-1">
             <div className="font-display text-[26px] font-bold tracking-[-0.4px] text-tg-brown [text-shadow:0_1px_10px_rgba(250,240,224,0.6)]">
               {character?.name}, {run.age}

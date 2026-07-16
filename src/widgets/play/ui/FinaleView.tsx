@@ -27,12 +27,12 @@ export function FinaleView({ run }: { run: RunState }) {
     <div className="relative mx-auto flex min-h-dvh w-full flex-col overflow-hidden">
       <SceneBackground scene="issykkul" dim />
 
-      <div className="relative z-[1] mx-auto flex min-h-dvh w-full max-w-[430px] animate-in fade-in flex-col gap-4 px-5 py-8 duration-1000">
+      <div className="relative z-[1] mx-auto flex min-h-dvh w-full max-w-[430px] animate-in fade-in flex-col gap-4 px-5 py-8 duration-1000 lg:max-w-[600px]">
         <div className="flex flex-col items-center gap-2 pt-2 text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/20 px-3.5 py-[7px] font-display text-[11px] font-bold tracking-[1px] text-[#F7E6C6] uppercase backdrop-blur-sm">
             <Sparkles size={12} className="fill-current stroke-none" /> Жизнь прожита
           </span>
-          <GameAvatar size={110} age={run.age} mood={run.stats.mood} />
+          <GameAvatar size={110} age={run.age} mood={run.stats.mood} characterId={run.characterId} />
           <h1 className="m-0 font-display text-[32px] leading-tight font-bold tracking-[-0.6px] text-[#FFFCF6] [text-shadow:0_2px_20px_rgba(46,30,18,0.55)]">
             {finale.ending.title}
           </h1>

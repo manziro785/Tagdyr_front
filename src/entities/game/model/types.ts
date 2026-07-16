@@ -148,6 +148,16 @@ export interface Ending {
 
 // ── сезоны ───────────────────────────────────────────────────────────────────
 
+/** Все фоновые сцены (базовые сезонные + вариации для разнообразия). */
+export type SceneName =
+  | "valley"
+  | "campus"
+  | "bazaar"
+  | "city"
+  | "issykkul"
+  | "jailoo"
+  | "city-evening";
+
 export interface SeasonMeta {
   number: number;
   /** «Выпускник», «Студенчество»… */
@@ -157,7 +167,7 @@ export interface SeasonMeta {
   /** Локация для шапки: «Село в Нарыне». */
   place: string;
   /** Ключ фоновой сцены. */
-  scene: "valley" | "campus" | "bazaar" | "city" | "issykkul";
+  scene: SceneName;
   /** Сколько ходов в сезоне. */
   turns: number;
   /** Тизер следующего этапа (показывается в межсезонье предыдущего). */

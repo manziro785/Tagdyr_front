@@ -3,8 +3,11 @@ import axios, { AxiosError } from "axios";
 import { useAuthStore } from "@/entities/session/model/auth-store";
 import type { TokenPair } from "@/entities/game/api/types";
 
+// переменная однажды попала в Vercel с BOM из PowerShell-пайпа — браузер
+// считал URL относительным; чистим невидимые символы и пустую строку
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:8787/api/v1";
+  (process.env.NEXT_PUBLIC_BASE_URL ?? "").replace(/﻿/g, "").trim() ||
+  "http://localhost:8787/api/v1";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

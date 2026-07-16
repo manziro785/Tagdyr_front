@@ -1,4 +1,5 @@
-import type { SeasonMeta } from "../model/types";
+import type { SceneName, SeasonMeta } from "../model/types";
+import { hashSeed } from "../model/rng";
 
 /**
  * Пять этапов жизни. Возраст стартует с 17; переходы между сезонами добавляют
@@ -56,6 +57,26 @@ export function getSeason(n: number): SeasonMeta {
   const meta = SEASONS[n - 1];
   if (!meta) throw new Error(`Unknown season ${n}`);
   return meta;
+}
+
+/**
+ * Вариации фона по сезонам: базовая сцена + альтернативы той же темы.
+ * Выбор детерминирован сидом жизни — «один сид, одна история» сохраняется,
+ * но у разных жизней разные пейзажи.
+ */
+const SCENE_VARIANTS: Record<SceneName, SceneName[]> = {
+  valley: ["valley", "jailoo"],
+  campus: ["campus", "city"],
+  bazaar: ["bazaar", "city-evening"],
+  city: ["city", "city-evening"],
+  issykkul: ["issykkul", "jailoo"],
+  jailoo: ["jailoo"],
+  "city-evening": ["city-evening"],
+};
+
+export function sceneForRun(season: SeasonMeta, seed: string): SceneName {
+  const pool = SCENE_VARIANTS[season.scene];
+  return pool[hashSeed(`${seed}:scene:${season.number}`) % pool.length]!;
 }
 
 /** Название стадии для подписи возраста: «18 · юность». */

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <!-- вечернее небо: тёплый закат над Бишкеком -->
+  <rect width="800" height="600" fill="#E8CFAE"/>
+  <rect width="800" height="280" fill="#D9B48C"/>
+  <rect width="800" height="150" fill="#C99C74" opacity="0.55"/>
+  <circle cx="240" cy="200" r="46" fill="#EFB24F"/>
+  <circle cx="240" cy="200" r="70" fill="#EFB24F" opacity="0.25"/>
+  <!-- горы за городом -->
+  <path d="M0 268 L140 170 L260 258 L400 158 L540 262 L660 185 L800 258 L800 360 L0 360 Z" fill="#8A6E52" opacity="0.6"/>
+  <path d="M388 168 L416 194 L405 198 L388 185 L371 196 L364 189 Z" fill="#FBF0DC" opacity="0.85"/>
+  <!-- дальний ряд домов -->
+  <g fill="#7A5C42" opacity="0.85">
+    <rect x="20" y="300" width="70" height="120" rx="4"/>
+    <rect x="120" y="270" width="56" height="150" rx="4"/>
+    <rect x="205" y="310" width="80" height="110" rx="4"/>
+    <rect x="320" y="255" width="62" height="165" rx="4"/>
+    <rect x="415" y="295" width="86" height="125" rx="4"/>
+    <rect x="535" y="270" width="58" height="150" rx="4"/>
+    <rect x="625" y="305" width="76" height="115" rx="4"/>
+    <rect x="730" y="285" width="52" height="135" rx="4"/>
+  </g>
+  <!-- ближний ряд домов -->
+  <g fill="#5C4433">
+    <rect x="0" y="380" width="110" height="180" rx="6"/>
+    <rect x="150" y="350" width="90" height="210" rx="6"/>
+    <rect x="280" y="395" width="120" height="165" rx="6"/>
+    <rect x="440" y="360" width="96" height="200" rx="6"/>
+    <rect x="576" y="400" width="110" height="160" rx="6"/>
+    <rect x="720" y="370" width="80" height="190" rx="6"/>
+  </g>
+  <!-- тёплые окна -->
+  <g fill="#F2C46B">
+    <rect x="16" y="398" width="14" height="18" rx="2"/><rect x="46" y="398" width="14" height="18" rx="2"/><rect x="76" y="430" width="14" height="18" rx="2"/><rect x="16" y="462" width="14" height="18" rx="2"/><rect x="46" y="494" width="14" height="18" rx="2"/>
+    <rect x="166" y="370" width="14" height="18" rx="2"/><rect x="196" y="370" width="14" height="18" rx="2"/><rect x="166" y="404" width="14" height="18" rx="2"/><rect x="196" y="438" width="14" height="18" rx="2"/><rect x="166" y="472" width="14" height="18" rx="2"/><rect x="196" y="506" width="14" height="18" rx="2"/>
+    <rect x="296" y="412" width="14" height="18" rx="2"/><rect x="326" y="412" width="14" height="18" rx="2"/><rect x="356" y="444" width="14" height="18" rx="2"/><rect x="296" y="478" width="14" height="18" rx="2"/><rect x="326" y="510" width="14" height="18" rx="2"/>
+    <rect x="456" y="378" width="14" height="18" rx="2"/><rect x="486" y="378" width="14" height="18" rx="2"/><rect x="456" y="412" width="14" height="18" rx="2"/><rect x="486" y="446" width="14" height="18" rx="2"/><rect x="516" y="478" width="14" height="18" rx="2"/><rect x="456" y="510" width="14" height="18" rx="2"/>
+    <rect x="592" y="418" width="14" height="18" rx="2"/><rect x="622" y="418" width="14" height="18" rx="2"/><rect x="652" y="450" width="14" height="18" rx="2"/><rect x="592" y="484" width="14" height="18" rx="2"/><rect x="622" y="516" width="14" height="18" rx="2"/>
+    <rect x="734" y="388" width="14" height="18" rx="2"/><rect x="764" y="422" width="14" height="18" rx="2"/><rect x="734" y="456" width="14" height="18" rx="2"/><rect x="764" y="490" width="14" height="18" rx="2"/>
+  </g>
+  <!-- улица и фонари -->
+  <rect y="560" width="800" height="40" fill="#4A372A"/>
+  <g>
+    <rect x="128" y="470" width="6" height="90" fill="#3C2C22"/>
+    <circle cx="131" cy="464" r="10" fill="#F2C46B"/>
+    <circle cx="131" cy="464" r="20" fill="#F2C46B" opacity="0.25"/>
+    <rect x="410" y="480" width="6" height="80" fill="#3C2C22"/>
+    <circle cx="413" cy="474" r="10" fill="#F2C46B"/>
+    <circle cx="413" cy="474" r="20" fill="#F2C46B" opacity="0.25"/>
+    <rect x="700" y="470" width="6" height="90" fill="#3C2C22"/>
+    <circle cx="703" cy="464" r="10" fill="#F2C46B"/>
+    <circle cx="703" cy="464" r="20" fill="#F2C46B" opacity="0.25"/>
+  </g>
+</svg>

@@ -11,6 +11,8 @@ export const SCENE_SRC: Record<SeasonMeta["scene"], string> = {
   bazaar: "/tagdyr/blur/bazaar.jpg",
   city: "/tagdyr/blur/city.jpg",
   issykkul: "/tagdyr/blur/issykkul.jpg",
+  jailoo: "/tagdyr/blur/jailoo.jpg",
+  "city-evening": "/tagdyr/blur/city-evening.jpg",
 };
 
 /**

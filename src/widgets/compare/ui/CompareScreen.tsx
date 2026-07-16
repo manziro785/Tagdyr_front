@@ -91,6 +91,7 @@ function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
           age={age ?? 17}
           mood={life.currentStats.mood}
           breathe={false}
+          characterId={life.characterId}
         />
         <span className="font-display text-[15px] font-bold text-tg-brown">
           {ch?.name}
@@ -145,9 +146,9 @@ export function CompareScreen() {
   const diffs = cmp ? keyDifferences(cmp.a, cmp.b) : [];
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:max-w-none lg:min-h-full">
-      <header className="px-5 pt-5">
-        <h1 className="m-0 inline-flex items-center gap-2 font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:min-h-0 lg:max-w-[860px] lg:bg-none">
+      <header className="px-5 pt-5 lg:px-0 lg:pt-3">
+        <h1 className="m-0 inline-flex items-center gap-2 font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown lg:text-[32px]">
           <GitCompareArrows
             size={22}
             strokeWidth={2.2}
@@ -155,12 +156,12 @@ export function CompareScreen() {
           />
           Две судьбы
         </h1>
-        <p className="mt-0.5 text-[13px] font-semibold text-tg-muted">
+        <p className="mt-0.5 text-[13px] font-semibold text-tg-muted lg:text-[14px]">
           Один старт — разные дороги. Выбери две жизни.
         </p>
       </header>
 
-      <div className="flex flex-1 flex-col gap-4 px-5 pt-4 pb-6">
+      <div className="flex flex-1 flex-col gap-4 px-5 pt-4 pb-6 lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
         {candidates.length < 2 ? (
           <div className="rounded-2xl border border-dashed border-tg-line bg-[rgba(251,244,232,0.5)] p-5 text-center text-[13.5px] font-bold text-tg-muted">
             Для сравнения нужны хотя бы две жизни. Проживи ещё одну — интересно
@@ -240,7 +241,7 @@ export function CompareScreen() {
                       <p className="m-0 font-display text-[10.5px] font-bold tracking-[0.5px] text-tg-amber-deep uppercase">
                         {d.question}
                       </p>
-                      <div className="mt-1.5 flex flex-col gap-1 text-[12.5px] leading-snug font-semibold">
+                      <div className="mt-1.5 flex flex-col gap-1 text-[12.5px] leading-snug font-semibold lg:flex-row lg:gap-6 lg:[&>p]:flex-1">
                         <p className="m-0 text-tg-brown">
                           <span className="font-mono text-[10px] text-tg-muted">
                             А

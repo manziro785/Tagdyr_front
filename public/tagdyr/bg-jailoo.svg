@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <!-- утреннее небо -->
+  <rect width="800" height="600" fill="#F3E8D0"/>
+  <circle cx="620" cy="120" r="52" fill="#EFBE63"/>
+  <circle cx="620" cy="120" r="78" fill="#EFBE63" opacity="0.22"/>
+  <!-- облака -->
+  <g fill="#FFFCF6" opacity="0.75">
+    <ellipse cx="180" cy="90" rx="70" ry="18"/>
+    <ellipse cx="235" cy="78" rx="45" ry="14"/>
+    <ellipse cx="430" cy="140" rx="55" ry="14"/>
+  </g>
+  <!-- дальние снежные пики -->
+  <path d="M0 250 L120 140 L230 240 L360 130 L490 245 L620 155 L800 240 L800 340 L0 340 Z" fill="#A8926E" opacity="0.5"/>
+  <path d="M348 140 L378 168 L366 172 L348 158 L330 170 L322 162 Z" fill="#FFFCF6" opacity="0.9"/>
+  <path d="M110 150 L134 172 L124 176 L108 164 L94 174 L86 166 Z" fill="#FFFCF6" opacity="0.85"/>
+  <!-- зелёные холмы жайлоо -->
+  <path d="M0 340 Q180 280 400 330 T800 320 L800 600 L0 600 Z" fill="#8FA37E"/>
+  <path d="M0 420 Q220 360 460 415 T800 400 L800 600 L0 600 Z" fill="#7C9070"/>
+  <path d="M0 510 Q260 460 520 505 T800 495 L800 600 L0 600 Z" fill="#6D8162"/>
+  <!-- табун: лошади силуэтами -->
+  <g fill="#5C4433">
+    <path d="M300 430 q6 -12 20 -12 q16 0 22 8 q10 -2 12 4 q2 5 -6 6 l-4 14 h-6 l2 -12 q-10 4 -18 2 l-2 10 h-6 l2 -12 q-12 -2 -16 -8 Z"/>
+    <path d="M296 434 q-8 0 -12 -8" stroke="#5C4433" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+  <g fill="#6B523F">
+    <path d="M420 470 q7 -14 23 -14 q18 0 25 9 q11 -2 13 5 q2 6 -7 7 l-4 16 h-7 l2 -14 q-11 5 -20 2 l-2 12 h-7 l2 -14 q-13 -2 -18 -9 Z"/>
+  </g>
+  <g fill="#4A372A">
+    <path d="M520 440 q5 -10 17 -10 q13 0 18 7 q8 -2 10 3 q2 4 -5 5 l-3 12 h-5 l1 -10 q-8 3 -15 1 l-2 9 h-5 l2 -10 q-10 -2 -13 -7 Z"/>
+  </g>
+  <!-- юрта на пастбище -->
+  <g>
+    <path d="M120 508 a56 32 0 0 1 112 0 Z" fill="#FBF4E8"/>
+    <path d="M120 508 a56 32 0 0 1 112 0" fill="none" stroke="#C96F4A" stroke-width="5"/>
+    <rect x="116" y="508" width="120" height="36" rx="8" fill="#FFFCF6"/>
+    <path d="M116 519 h120 M116 532 h120" stroke="#C96F4A" stroke-width="4" opacity="0.7"/>
+    <rect x="160" y="512" width="30" height="32" rx="4" fill="#8A5A38"/>
+    <path d="M176 470 q6 -14 2 -24" stroke="#BBA990" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.8"/>
+  </g>
+  <!-- цветы и трава -->
+  <g>
+    <circle cx="640" cy="560" r="5" fill="#E2A03A"/>
+    <circle cx="668" cy="572" r="4" fill="#C77E73"/>
+    <circle cx="80" cy="580" r="5" fill="#E2A03A"/>
+    <path d="M700 555 q4 -18 8 0 M714 558 q4 -16 8 0 M60 565 q4 -18 8 0 M340 545 q4 -16 8 0 M354 547 q4 -14 8 0" stroke="#5F7457" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>
