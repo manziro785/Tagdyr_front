@@ -1,6 +1,6 @@
 "use client";
 
-import { GitCompareArrows, Home, LogOut, Trophy, User } from "lucide-react";
+import { GitCompareArrows, Home, LogOut, Medal, Trophy, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 const ITEMS = [
   { href: "/lives", label: "Жизни", icon: User },
   { href: "/play", label: "Игра", icon: Home },
+  { href: "/rating", label: "Рейтинг", icon: Medal },
   { href: "/compare", label: "Сравнить", icon: GitCompareArrows },
   { href: "/profile", label: "Профиль", icon: Trophy },
 ] as const;

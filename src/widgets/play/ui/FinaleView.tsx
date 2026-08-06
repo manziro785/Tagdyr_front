@@ -9,6 +9,7 @@ import type { RunState } from "@/entities/game/model/run-store";
 import { CtaButton } from "@/entities/game/ui/CtaButton";
 import { GameAvatar } from "@/entities/game/ui/GameAvatar";
 import { SceneBackground } from "@/entities/game/ui/SceneBackground";
+import { ShareLifeButton } from "@/features/share/ui/ShareLifeButton";
 import { useRouter } from "next/navigation";
 
 /** Финал жизни: архетип концовки, индекс, «письмо себе в 17», разблокировки. */
@@ -80,6 +81,7 @@ export function FinaleView({ run }: { run: RunState }) {
           <CtaButton onClick={() => router.push("/lives")}>
             <Plus size={18} strokeWidth={2.6} /> Прожить ещё одну жизнь
           </CtaButton>
+          <ShareLifeButton lifeId={run.lifeId} title={finale.ending.title} />
           <Link
             href="/compare"
             className="inline-flex w-full items-center justify-center gap-2 rounded-[18px] border border-white/50 bg-white/20 p-[13px] font-display text-[15px] font-bold text-[#FFFCF6] backdrop-blur-sm transition-colors hover:bg-white/30"
