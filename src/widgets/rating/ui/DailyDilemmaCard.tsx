@@ -11,7 +11,9 @@ import { cn } from "@/lib/utils";
  * подсказка «как принято отвечать», поэтому проценты появляются после клика.
  */
 export function DailyDilemmaCard() {
-  const { data, isLoading, isError } = useDilemmaToday();
+  // isPending, а не isLoading: между ретраями (холодный старт API на Render)
+  // isLoading ненадолго гаснет, и карточка мигала бы пустым заголовком
+  const { data, isPending, isError } = useDilemmaToday();
   const answer = useAnswerDilemma();
 
   const answered = data?.myChoice ?? null;
@@ -31,7 +33,7 @@ export function DailyDilemmaCard() {
         )}
       </div>
 
-      {isLoading && (
+      {isPending && !isError && (
         <p className="m-0 text-[13px] font-semibold text-tg-muted">Загружаю вопрос дня…</p>
       )}
 

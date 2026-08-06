@@ -28,7 +28,9 @@ export function LeaderboardPanel() {
   const [season, setSeason] = useState(1);
   const [window, setWindow] = useState<LeaderboardWindow>("week");
 
-  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  // isPending вместо isLoading: в паузах между ретраями isLoading гаснет, и
+  // таблица успевала показать «ещё никто не финишировал» вместо загрузки
+  const { data, isPending, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useLeaderboard(season, window);
 
   const entries = (data?.pages ?? []).flatMap((p) => p.entries);
@@ -102,7 +104,7 @@ export function LeaderboardPanel() {
       )}
 
       <div className="flex flex-col gap-1.5">
-        {isLoading && (
+        {isPending && !isError && (
           <p className="m-0 text-[13px] font-semibold text-tg-muted">Собираю таблицу…</p>
         )}
 
@@ -112,7 +114,7 @@ export function LeaderboardPanel() {
           </p>
         )}
 
-        {!isLoading && !isError && entries.length === 0 && (
+        {!isPending && !isError && entries.length === 0 && (
           <div className="rounded-2xl border border-dashed border-tg-line bg-[rgba(251,244,232,0.5)] p-4 text-center">
             <p className="m-0 text-[13px] font-bold text-tg-brown-2">
               В «{seasonMeta.title}» за это время ещё никто не финишировал.
