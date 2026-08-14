@@ -9,11 +9,12 @@ import { GameAvatar } from "@/entities/game/ui/GameAvatar";
 import { useLeaderboard } from "@/entities/meta/api";
 import type { LeaderboardWindow } from "@/entities/meta/api";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
-const WINDOWS: { value: LeaderboardWindow; label: string }[] = [
-  { value: "week", label: "Неделя" },
-  { value: "month", label: "Месяц" },
-  { value: "all", label: "Всё время" },
+const WINDOWS: { value: LeaderboardWindow; key: string }[] = [
+  { value: "week", key: "windowWeek" },
+  { value: "month", key: "windowMonth" },
+  { value: "all", key: "windowAll" },
 ];
 
 /** Медаль для тройки лидеров, дальше — просто номер. */
@@ -24,6 +25,7 @@ const MEDAL_COLOR: Record<number, string> = {
 };
 
 export function LeaderboardPanel() {
+  const t = useTranslations("leaderboard");
   // сезон 1 по умолчанию: его прошли все, кто вообще играл, — таблица не пустая
   const [season, setSeason] = useState(1);
   const [window, setWindow] = useState<LeaderboardWindow>("week");
@@ -42,10 +44,10 @@ export function LeaderboardPanel() {
       <div className="flex items-baseline justify-between gap-2">
         <span className="inline-flex items-center gap-1.5 font-display text-[15px] font-semibold text-tg-brown lg:text-[19px]">
           <Trophy size={15} strokeWidth={2.3} className="text-tg-amber-deep" />
-          Индекс жизни
+          {t("title")}
         </span>
         <span className="shrink-0 text-xs font-bold text-tg-muted">
-          {first ? `${first.totalPlayers} участников` : "…"}
+          {first ? t("players", { count: first.totalPlayers }) : "…"}
         </span>
       </div>
 
@@ -81,7 +83,7 @@ export function LeaderboardPanel() {
                 : "border-transparent bg-transparent text-tg-faint hover:text-tg-muted",
             )}
           >
-            {w.label}
+            {t(w.key)}
           </button>
         ))}
       </div>
@@ -91,10 +93,10 @@ export function LeaderboardPanel() {
         <div className="flex items-center justify-between gap-3 rounded-2xl bg-tg-amber-tint px-4 py-3">
           <span className="min-w-0">
             <span className="block font-display text-[15px] font-bold text-tg-brown">
-              Ты {first.me.rank}-й из {first.totalPlayers}
+              {t("yourRank", { rank: first.me.rank, total: first.totalPlayers })}
             </span>
             <span className="block text-[11.5px] font-bold text-tg-amber-deep">
-              обошёл {first.me.percentile}% игроков
+              {t("yourPercentile", { percent: first.me.percentile })}
             </span>
           </span>
           <span className="shrink-0 font-display text-[24px] leading-none font-bold text-tg-brown">
@@ -105,22 +107,22 @@ export function LeaderboardPanel() {
 
       <div className="flex flex-col gap-1.5">
         {isPending && !isError && (
-          <p className="m-0 text-[13px] font-semibold text-tg-muted">Собираю таблицу…</p>
+          <p className="m-0 text-[13px] font-semibold text-tg-muted">{t("loading")}</p>
         )}
 
         {isError && (
           <p className="m-0 text-[13px] font-bold text-[#B5503C]">
-            Рейтинг не загрузился. Попробуй позже.
+            {t("error")}
           </p>
         )}
 
         {!isPending && !isError && entries.length === 0 && (
           <div className="rounded-2xl border border-dashed border-tg-line bg-[rgba(251,244,232,0.5)] p-4 text-center">
             <p className="m-0 text-[13px] font-bold text-tg-brown-2">
-              В «{seasonMeta.title}» за это время ещё никто не финишировал.
+              {t("emptyTitle", { season: seasonMeta.title })}
             </p>
             <p className="mt-1 mb-0 text-[12px] font-semibold text-tg-muted">
-              Пройди сезон — и займёшь первую строчку.
+              {t("emptyHint")}
             </p>
           </div>
         )}
@@ -154,10 +156,10 @@ export function LeaderboardPanel() {
               <span className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate font-display text-[14px] font-bold text-tg-brown">
                   {e.displayName}
-                  {e.isMe && " · ты"}
+                  {e.isMe && t("you")}
                 </span>
                 <span className="text-[11px] font-semibold text-tg-muted">
-                  {ch?.name ?? "Безымянный"}
+                  {ch?.name ?? t("unnamed")}
                 </span>
               </span>
               <span className="shrink-0 font-display text-[16px] font-bold text-tg-brown">
@@ -174,7 +176,7 @@ export function LeaderboardPanel() {
             disabled={isFetchingNextPage}
             className="mt-1 cursor-pointer rounded-2xl border border-tg-line-soft bg-tg-card-2 py-2.5 text-[13px] font-extrabold text-tg-brown-2 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isFetchingNextPage ? "Гружу…" : "Показать ещё"}
+            {isFetchingNextPage ? t("loadingMore") : t("more")}
           </button>
         )}
       </div>

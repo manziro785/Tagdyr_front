@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
 import { useCompleteSeason, useFinishLife, useLife } from "@/entities/game/api";
@@ -42,6 +43,7 @@ function CenteredNote({ children }: { children: React.ReactNode }) {
  * дёргает complete/finish через активный API (сервер или гостевой localStorage).
  */
 export function PlayScreen({ lifeId }: { lifeId: string }) {
+  const t = useTranslations("play");
   const { data: life, isLoading, isError, refetch } = useLife(lifeId);
   const run = useRunsStore((s) => s.runs[lifeId]);
   const startRun = useRunsStore((s) => s.startRun);
@@ -142,19 +144,21 @@ export function PlayScreen({ lifeId }: { lifeId: string }) {
   if (isLoading) {
     return (
       <CenteredNote>
-        <span className="font-display text-xl font-bold text-tg-muted">Вспоминаю жизнь…</span>
+        <span className="font-display text-xl font-bold text-tg-muted">
+          {t("loading")}
+        </span>
       </CenteredNote>
     );
   }
   if (isError || !life) {
     return (
       <CenteredNote>
-        <p className="font-display text-lg font-bold text-tg-brown">Жизнь не нашлась</p>
+        <p className="font-display text-lg font-bold text-tg-brown">{t("notFound")}</p>
         <p className="text-sm font-semibold text-tg-muted">
-          Возможно, она в другом режиме (гость ↔ аккаунт) или была удалена.
+          {t("notFoundHint")}
         </p>
         <CtaButton onClick={() => (window.location.href = "/lives")} className="max-w-60">
-          К списку жизней
+          {t("toLives")}
         </CtaButton>
       </CenteredNote>
     );
@@ -172,22 +176,22 @@ export function PlayScreen({ lifeId }: { lifeId: string }) {
         {completeSeason.isError ? (
           <>
             <p className="font-display text-lg font-bold text-tg-brown">
-              Не получилось сохранить сезон
+              {t("saveFailed")}
             </p>
             <p className="text-sm font-semibold text-tg-muted">
-              Проверь соединение — прогресс не потерян, можно повторить.
+              {t("saveFailedHint")}
             </p>
             <CtaButton onClick={() => completeSeason.reset()} className="max-w-60">
-              Повторить
+              {t("retry")}
             </CtaButton>
           </>
         ) : (
           <>
             <span className="animate-pulse font-display text-xl font-bold text-tg-brown-2">
-              Годы летят…
+              {t("yearsFly")}
             </span>
             <span className="text-sm font-semibold text-tg-muted">
-              Считаем, что выросло, а что обросло процентами
+              {t("yearsFlyHint")}
             </span>
           </>
         )}
@@ -198,10 +202,12 @@ export function PlayScreen({ lifeId }: { lifeId: string }) {
   if (!run) {
     return (
       <CenteredNote>
-        <span className="font-display text-xl font-bold text-tg-muted">Готовим сцену…</span>
+        <span className="font-display text-xl font-bold text-tg-muted">
+          {t("preparingScene")}
+        </span>
         {finishLife.isError && (
           <CtaButton onClick={() => refetch()} className="max-w-60">
-            Обновить
+            {t("refresh")}
           </CtaButton>
         )}
       </CenteredNote>

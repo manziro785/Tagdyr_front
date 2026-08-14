@@ -1,0 +1,423 @@
+{
+  "meta": {
+    "title": "Tagdyr — a life sim set in Kyrgyzstan",
+    "description": "A life simulator: from school leaver to grown-up, one card at a time. Small choices add up to a fate."
+  },
+  "common": {
+    "appName": "Tagdyr",
+    "tagline": "Small choices add up to a fate",
+    "loading": "Tagdyr…",
+    "currency": "som",
+    "next": "Next",
+    "signOut": "Sign out",
+    "myLives": "My lives",
+    "backToLives": "← My lives"
+  },
+  "nav": {
+    "lives": "Lives",
+    "play": "Play",
+    "rating": "Rating",
+    "compare": "Compare",
+    "profile": "Profile"
+  },
+  "stats": {
+    "money": "Money",
+    "energy": "Energy",
+    "mood": "Mood",
+    "relationships": "Bonds"
+  },
+  "locale": {
+    "switchLabel": "Language",
+    "ru": "Русский",
+    "ky": "Кыргызча",
+    "en": "English"
+  },
+  "auth": {
+    "or": "or",
+    "fields": {
+      "email": "Email",
+      "emailPlaceholder": "azamat@example.kg",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "newPasswordPlaceholder": "At least 8 characters",
+      "name": "What should we call you",
+      "namePlaceholder": "Azamat"
+    },
+    "login": {
+      "subtitle": "Welcome back. Your fate is waiting.",
+      "title": "Sign in",
+      "remember": "Remember me",
+      "forgot": "Forgot password?",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "guest": "Play as a guest · just try it",
+      "noAccount": "First time here?",
+      "toRegister": "Start a new life"
+    },
+    "register": {
+      "subtitle": "Small choices add up to a fate. Start yours.",
+      "title": "Start a new life",
+      "agreePrefix": "I agree to the",
+      "terms": "terms",
+      "agreeAnd": "and",
+      "privacy": "privacy policy",
+      "submit": "Create account",
+      "submitting": "Creating…",
+      "hasAccount": "Already have an account?",
+      "toLogin": "Sign in"
+    },
+    "social": {
+      "soon": "Coming soon — for now, email or guest",
+      "googlePending": "Signing in with Google…"
+    },
+    "errors": {
+      "emailRequired": "Enter your email",
+      "emailInvalid": "That email looks off — check the address",
+      "passwordRequired": "Enter your password",
+      "passwordNew": "Come up with a password",
+      "passwordShort": "Too short — at least 8 characters",
+      "passwordLong": "Too long — 72 characters max",
+      "nameRequired": "Tell us your name",
+      "nameLong": "Name is too long — 60 characters max",
+      "agreeRequired": "You need to accept the terms",
+      "invalidCredentials": "Wrong email or password.",
+      "googleUnavailable": "Google sign-in isn't wired up on the server yet.",
+      "emailTaken": "That email is already registered — try signing in.",
+      "validation": "Check the fields: a real email, password from 8 characters.",
+      "offline": "The server isn't responding. You can play as a guest — progress stays in this browser.",
+      "unknown": "Something went wrong. Try again."
+    },
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
+  },
+  "pages": {
+    "login": {
+      "title": "Sign in — Tagdyr",
+      "description": "Welcome back. Your fate is waiting."
+    },
+    "register": {
+      "title": "Sign up — Tagdyr",
+      "description": "Small choices add up to a fate. Start yours."
+    },
+    "lives": {
+      "title": "My lives — Tagdyr"
+    },
+    "compare": {
+      "title": "Two fates — Tagdyr"
+    },
+    "rating": {
+      "title": "Rating — Tagdyr"
+    },
+    "profile": {
+      "title": "Profile — Tagdyr"
+    },
+    "about": {
+      "title": "About — Tagdyr"
+    }
+  },
+  "lives": {
+    "yours": "Your lives",
+    "counter": "{used} of {total}",
+    "loading": "Loading lives…",
+    "unnamed": "Nameless",
+    "finished": "Life lived — see the outcome",
+    "interseason": "between seasons",
+    "confirmDelete": "Sure?",
+    "deleteLabel": "Delete life",
+    "freeSlot": "Free slot — pick a start",
+    "freeSlotBelow": "below",
+    "freeSlotRight": "on the right",
+    "newLife": "New life — pick a start",
+    "lockedBy": "for the «Anchor» ending",
+    "lockedHint": "Marat unlocks once any of your lives reaches the «Anchor» ending — the one about family and the people others call first.",
+    "slotsFull": "All slots taken",
+    "creating": "Starting…",
+    "start": "Start a new life",
+    "createError": "Couldn't create the life. Try again."
+  },
+  "compare": {
+    "title": "Two fates",
+    "subtitle": "One start — different roads. Pick two lives.",
+    "needTwo": "You need at least two lives to compare. Live one more — it's worth seeing how else it could have gone.",
+    "howTo": "Pick one life per row — I'll put them side by side and highlight the forks where you chose differently.",
+    "sideA": "Life A",
+    "sideB": "Life B",
+    "badgeA": "life A",
+    "badgeB": "life B",
+    "option": "Slot {slot} · {name}, {age}",
+    "lived": "life lived",
+    "inProgress": "season {season} · in progress",
+    "pickSecond": "One life picked — mark the second and I'll line them up.",
+    "pickNone": "Nothing picked yet.",
+    "loading": "Comparing fates…",
+    "lifeIndex": "life index {value}",
+    "diffs": "Where the roads split"
+  },
+  "choice": {
+    "notEnough": "not enough",
+    "chance": "Chance {value}%",
+    "debt": "debt {amount}"
+  },
+  "play": {
+    "loading": "Recalling the life…",
+    "notFound": "Life not found",
+    "notFoundHint": "It may live in the other mode (guest ↔ account), or it was deleted.",
+    "toLives": "To my lives",
+    "closeLabel": "To my lives",
+    "saveFailed": "Couldn't save the season",
+    "saveFailedHint": "Check your connection — progress is safe, you can retry.",
+    "retry": "Retry",
+    "yearsFly": "Years are flying…",
+    "yearsFlyHint": "Counting what grew and what gathered interest",
+    "preparingScene": "Setting the scene…",
+    "refresh": "Refresh",
+    "season": "Season {number} · {title}",
+    "turn": "turn {current} of {total}",
+    "debtSuffix": "debt {amount}",
+    "seasonGoal": "Season goal",
+    "seasonGoalInline": "Season goal: {goal}",
+    "seedLine": "season {season} · turn {current}/{total} · seed {seed}",
+    "outcomeFailed": "Didn't pan out…",
+    "nothingChanged": "Life goes on as usual.",
+    "tookDebt": "Borrowed {amount} at {rate}% a year — interest never sleeps.",
+    "knowledgeCard": "Knowledge card"
+  },
+  "budget": {
+    "kicker": "First salary · envelopes",
+    "intro": "12,000 som in hand. Split it into envelopes — tap one to drop a bill in. Spoiler: it won't cover everything.",
+    "inHand": "In hand",
+    "closed": "covered ✓",
+    "missing": "{hint} · {amount} short",
+    "removeLabel": "Take a bill out of «{envelope}»",
+    "placeMore": "Place {amount} more",
+    "done": "Done — that's how we live",
+    "envelopes": {
+      "rent": "Rent",
+      "food": "Food",
+      "toi": "Family toi",
+      "savings": "Savings",
+      "wants": "Wants"
+    },
+    "hints": {
+      "rent": "needs 4,000",
+      "food": "needs 3,000",
+      "toi": "they expect 2,000",
+      "savings": "future you says thanks",
+      "wants": "have you earned it?"
+    },
+    "diary": {
+      "shortRent": "Split the first salary so badly that rent came up short — borrowed from a neighbour at interest. The envelope method, learned backwards.",
+      "saver": "Split the first salary into envelopes, and «savings» got the fattest one. The wants can wait.",
+      "spender": "First salary: the «wants» envelope won 3:0. But what sneakers!",
+      "balanced": "Split the first salary into envelopes, the way mum taught. Not everything fit, but nobody went hungry."
+    }
+  },
+  "flags": {
+    "higherEd": "Got into university",
+    "hasJob": "Has a job",
+    "hasBusiness": "Own business",
+    "wentAbroad": "Went abroad",
+    "backToVillage": "Back to the roots",
+    "familyFirst": "Family anchor",
+    "savedEmergencyFund": "Safety cushion",
+    "craftsman": "A craft in hand",
+    "married": "Own family",
+    "hasHome": "Own home",
+    "masterDegree": "Master's degree",
+    "academicPath": "Academic path",
+    "communityPath": "One of the people"
+  },
+  "interseason": {
+    "seasonEnd": "End of season {number}",
+    "title": "{season} — chapter closed",
+    "years": "{count, plural, one {# year} other {# years}}",
+    "instant": "a blink",
+    "goalMet": "Season goal met: {goal}. {hint}.",
+    "goalMissed": "The goal «{goal}» didn't work out. {hint} — try it differently next life.",
+    "changes": "What changed",
+    "newFlag": "new flag",
+    "debtGrew": "While you lived — the debt grew",
+    "debtBefore": "was · {rate}% a year",
+    "debtAfter": "after {years}",
+    "savingsGrew": "And savings quietly worked: {before} → {after} at {rate}%.",
+    "nextSeason": "Next · season {number}",
+    "continuing": "One moment…",
+    "toFinale": "Learn your fate",
+    "continue": "Keep living"
+  },
+  "finale": {
+    "lived": "Life lived",
+    "subtitle": "{name}, {age} · archetype «{archetype}»",
+    "firstTime": " · unlocked for the first time!",
+    "lifeIndex": "Life index",
+    "letter": "A letter to yourself at 17",
+    "unlocked": "New character: {names} — already waiting at the start.",
+    "oneMore": "Live one more life",
+    "compare": "Compare with another life"
+  },
+  "rating": {
+    "title": "Rating",
+    "subtitle": "How others lived the season — and one shared question for today",
+    "guestTitle": "Rating and the daily dilemma are for players with an account",
+    "guestHint": "Guest progress lives only in this browser. Create an account and your life index joins the shared table.",
+    "guestCta": "Create an account"
+  },
+  "dilemma": {
+    "title": "Dilemma of the day",
+    "loading": "Loading today's question…",
+    "error": "Couldn't fetch the dilemma. Refresh the page.",
+    "answered": "Vote counted. A new question tomorrow.",
+    "pick": "Pick an option — I'll show how everyone else answered.",
+    "voteFailed": "The vote didn't go through. Try again."
+  },
+  "leaderboard": {
+    "title": "Life index",
+    "players": "{count} players",
+    "windowWeek": "Week",
+    "windowMonth": "Month",
+    "windowAll": "All time",
+    "yourRank": "You're {rank} of {total}",
+    "yourPercentile": "ahead of {percent}% of players",
+    "loading": "Building the table…",
+    "error": "The rating didn't load. Try later.",
+    "emptyTitle": "Nobody has finished «{season}» in this window yet.",
+    "emptyHint": "Play a season — and take the top row.",
+    "you": " · you",
+    "unnamed": "Nameless",
+    "loadingMore": "Loading…",
+    "more": "Show more"
+  },
+  "share": {
+    "textWithTitle": "My life in «Tagdyr»: {title}",
+    "text": "My life in «Tagdyr»",
+    "preparing": "Preparing the link…",
+    "copied": "Link copied",
+    "failed": "Didn't work — try again?",
+    "idle": "Share this life"
+  },
+  "sharePage": {
+    "player": "Player",
+    "hero": "hero",
+    "headline": "{name}, {age} — life index {index}",
+    "notFoundTitle": "Link not found — Tagdyr",
+    "metaTitle": "{headline} · Tagdyr",
+    "metaFinished": "{name} lived a life all the way to the «{ending}» ending. Live yours.",
+    "metaInProgress": "{name} is playing «Tagdyr»: {seasons} seasons in. Live your own life.",
+    "lived": "Life lived",
+    "living": "Life goes on",
+    "nameAge": "{name}, {age}",
+    "byline": "{player} · {character}, {age} · ",
+    "lifeIndex": "Life index",
+    "seasonsDone": "{done} of 5 seasons behind",
+    "firstSeason": "The first season has just begun",
+    "about": "«Tagdyr» is a life sim set in Kyrgyzstan: from school leaver to grown-up, one card at a time. A family toi, the first salary, a loan at interest — small choices add up to a fate.",
+    "cta": "Live your own life",
+    "whatIsIt": "What is this game",
+    "goneTitle": "This link no longer lives",
+    "goneHint": "The life behind this link was deleted, or never existed. You can still live your own right now.",
+    "goneCta": "Go to «Tagdyr»"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "{who} · the collection builds up over several lives",
+    "player": "Player",
+    "guest": "Guest",
+    "endings": "Endings",
+    "endingsCount": "{unlocked} of {total} unlocked",
+    "endingLocked": "This fate hasn't been lived yet.",
+    "cards": "Knowledge cards",
+    "cardsCount": "{unlocked} of {total} collected",
+    "cardLocked": "Hidden somewhere in season {season}. Live more attentively.",
+    "categories": {
+      "finance": "Finance",
+      "relationships": "Bonds",
+      "health": "Health",
+      "career": "Career",
+      "life": "Life"
+    }
+  },
+  "phone": {
+    "chance": "Chance {value}%",
+    "tabs": {
+      "play": "Play",
+      "lives": "Lives",
+      "budget": "Budget",
+      "profile": "Profile"
+    },
+    "demo": {
+      "name": "Azamat",
+      "stage": "Youth",
+      "place": "A yard in Bishkek",
+      "eventKicker": "Yard · a family toi",
+      "eventText": "An older cousin is getting married — the whole family chips in for the gift. Mum whispers: «Showing up empty-handed is awkward, at least 2,000…». And the stipend has only just landed. Kudai buyursa, one day they'll do the same for you.",
+      "choiceGift": "Chip in for the gift — 2,000 som",
+      "choiceHelp": "Give 500 and help with the toi yourself",
+      "choiceSkip": "Skip it, keep the money",
+      "deltaGift": "−2,000 som",
+      "deltaHelp": "−500 som"
+    }
+  },
+  "landing": {
+    "navHow": "How to play",
+    "navStories": "Stories",
+    "signIn": "Sign in",
+    "badge": "A life sim set in Kyrgyzstan",
+    "badgeMobile": "Life sim · Kyrgyzstan",
+    "headline1": "Small choices",
+    "headline2": "add up to a",
+    "headlineAccent": "fate",
+    "headlineMobile": "Small choices — your",
+    "headlineMobileAccent": "fate",
+    "lead": "From school leaver to grown-up — one card at a time. A family toi, the first salary, a loan at interest. Kudai buyursa, you'll live to see your own story.",
+    "leadMobile": "From school leaver to grown-up. Choose by cards, grow, take your knocks. Kudai buyursa.",
+    "startLife": "Start a life",
+    "continueLife": "Continue your life",
+    "signInSaved": "Sign in to your save",
+    "playedBefore": "Played before? Sign in →",
+    "myLivesArrow": "My lives →",
+    "features": {
+      "finance": "Financial literacy in the mechanics",
+      "lives": "Up to 3 parallel lives",
+      "stats": "4 stats, no overload",
+      "financeShort": "Money sense",
+      "livesShort": "3 lives",
+      "statsShort": "4 stats"
+    },
+    "floatSalaryTitle": "+5,000 som",
+    "floatSalarySub": "first salary",
+    "floatRelTitle": "Bonds ↑",
+    "floatRelSub": "didn't skimp on the toi",
+    "sections": {
+      "howKicker": "How to play",
+      "howTitle": "Three steps from school leaver to your own story",
+      "step1Title": "Choose where to start",
+      "step1Text": "A yard in Bishkek, a village in Naryn or the city centre. Every start has its own money, character and its own temptations.",
+      "step2Title": "Live it card by card",
+      "step2Text": "Five seasons — from 17 to adulthood. A family toi, the first salary, a loan at interest: every choice moves money, energy, mood and bonds.",
+      "step3Title": "Live up to your ending",
+      "step3Text": "{count} fates — from «The Entrepreneur» to «The Mountain Soul». Between seasons the years fly: savings quietly grow, and debts never sleep.",
+      "noteFinance": "Financial literacy is built into the mechanics, not into lectures",
+      "noteCards": "13 knowledge cards hidden inside the choices",
+      "storiesKicker": "Stories",
+      "storiesTitle": "The same streets — different fates",
+      "ctaTitle": "So what fate will you draw?",
+      "ctaText": "Up to three parallel lives — check how it would have gone if you'd chosen otherwise back then. Kudai buyursa.",
+      "footerTagline": "A game about choices, money and life in Kyrgyzstan",
+      "footerAbout": "About"
+    }
+  },
+  "about": {
+    "back": "← Tagdyr",
+    "tagline": "A game about choices, money and life in Kyrgyzstan",
+    "intro": "«Tagdyr» (Kyrgyz for «fate») is a life simulator from school leaver to grown-up. Card by card you decide: go to Issyk-Kul or save for autumn, study or work, help the family or put money aside. Small choices add up to a fate.",
+    "card1Title": "Financial literacy without lectures",
+    "card1Text": "A loan at interest, a safety cushion, compound interest — the player lives through all of it instead of reading about it.",
+    "card2Title": "About our life",
+    "card2Text": "A family toi, a building site at Zhanybek's, Bishkek marshrutkas and the shore of Issyk-Kul. Situations everyone here grew up with.",
+    "card3Title": "Up to three parallel lives",
+    "card3Text": "Live one fate as stubborn Aibek, another as quick-witted Aizhan, and compare where the roads split.",
+    "card4Title": "A collection for years",
+    "card4Text": "10 endings and knowledge cards hidden inside the choices. Everything unlocks by playing — no shortcuts.",
+    "footer": "A pet project made with warmth for home. Kudai buyursa."
+  }
+}

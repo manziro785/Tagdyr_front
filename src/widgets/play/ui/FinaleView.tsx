@@ -1,7 +1,6 @@
 "use client";
 
 import { GitCompareArrows, Mail, Plus, Sparkles, Trophy, UserPlus } from "lucide-react";
-import Link from "next/link";
 
 import { getCharacter } from "@/entities/game/content/characters";
 import { composeLetter } from "@/entities/game/model/epilogue";
@@ -10,10 +9,12 @@ import { CtaButton } from "@/entities/game/ui/CtaButton";
 import { GameAvatar } from "@/entities/game/ui/GameAvatar";
 import { SceneBackground } from "@/entities/game/ui/SceneBackground";
 import { ShareLifeButton } from "@/features/share/ui/ShareLifeButton";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 /** Финал жизни: архетип концовки, индекс, «письмо себе в 17», разблокировки. */
 export function FinaleView({ run }: { run: RunState }) {
+  const t = useTranslations("finale");
   const router = useRouter();
   const finale = run.finale;
   if (!finale) return null;
@@ -31,15 +32,19 @@ export function FinaleView({ run }: { run: RunState }) {
       <div className="relative z-[1] mx-auto flex min-h-dvh w-full max-w-[430px] animate-in fade-in flex-col gap-4 px-5 py-8 duration-1000 lg:max-w-[600px]">
         <div className="flex flex-col items-center gap-2 pt-2 text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/20 px-3.5 py-[7px] font-display text-[11px] font-bold tracking-[1px] text-[#F7E6C6] uppercase backdrop-blur-sm">
-            <Sparkles size={12} className="fill-current stroke-none" /> Жизнь прожита
+            <Sparkles size={12} className="fill-current stroke-none" /> {t("lived")}
           </span>
           <GameAvatar size={110} age={run.age} mood={run.stats.mood} characterId={run.characterId} />
           <h1 className="m-0 font-display text-[32px] leading-tight font-bold tracking-[-0.6px] text-[#FFFCF6] [text-shadow:0_2px_20px_rgba(46,30,18,0.55)]">
             {finale.ending.title}
           </h1>
           <p className="m-0 text-[13px] font-bold text-[#F7E6C6]/90">
-            {character?.name}, {run.age} · архетип «{finale.ending.archetype}»
-            {finale.newEnding && " · открыта впервые!"}
+            {t("subtitle", {
+              name: character?.name ?? "",
+              age: run.age,
+              archetype: finale.ending.archetype,
+            })}
+            {finale.newEnding && t("firstTime")}
           </p>
         </div>
 
@@ -49,7 +54,7 @@ export function FinaleView({ run }: { run: RunState }) {
           </p>
           <div className="mt-3 flex items-center justify-between rounded-2xl bg-tg-amber-tint px-4 py-3">
             <span className="inline-flex items-center gap-1.5 text-[12px] font-extrabold tracking-wide text-tg-amber-deep uppercase">
-              <Trophy size={14} strokeWidth={2.4} /> Индекс жизни
+              <Trophy size={14} strokeWidth={2.4} /> {t("lifeIndex")}
             </span>
             <span className="font-display text-[26px] leading-none font-bold text-tg-brown">
               {finale.lifeIndex.toFixed(1)}
@@ -59,7 +64,7 @@ export function FinaleView({ run }: { run: RunState }) {
 
         <div className="rounded-[20px] border border-white/50 bg-[rgba(251,245,234,0.88)] p-4 backdrop-blur-md">
           <p className="mb-1.5 inline-flex items-center gap-1.5 font-display text-[11px] font-bold tracking-[0.6px] text-tg-terra-deep uppercase">
-            <Mail size={13} strokeWidth={2.4} /> Письмо себе в 17
+            <Mail size={13} strokeWidth={2.4} /> {t("letter")}
           </p>
           <p className="m-0 text-[13.5px] leading-[1.65] font-medium text-pretty text-tg-brown-2 italic">
             {letter}
@@ -72,21 +77,21 @@ export function FinaleView({ run }: { run: RunState }) {
               <UserPlus size={17} strokeWidth={2.2} />
             </span>
             <p className="m-0 text-[13px] font-bold text-tg-brown">
-              Новый персонаж: {unlockedNames.join(", ")} — уже ждёт на старте.
+              {t("unlocked", { names: unlockedNames.join(", ") })}
             </p>
           </div>
         )}
 
         <div className="mt-auto flex flex-col gap-2.5 pt-2">
           <CtaButton onClick={() => router.push("/lives")}>
-            <Plus size={18} strokeWidth={2.6} /> Прожить ещё одну жизнь
+            <Plus size={18} strokeWidth={2.6} /> {t("oneMore")}
           </CtaButton>
           <ShareLifeButton lifeId={run.lifeId} title={finale.ending.title} />
           <Link
             href="/compare"
             className="inline-flex w-full items-center justify-center gap-2 rounded-[18px] border border-white/50 bg-white/20 p-[13px] font-display text-[15px] font-bold text-[#FFFCF6] backdrop-blur-sm transition-colors hover:bg-white/30"
           >
-            <GitCompareArrows size={17} strokeWidth={2.2} /> Сравнить с другой жизнью
+            <GitCompareArrows size={17} strokeWidth={2.2} /> {t("compare")}
           </Link>
         </div>
       </div>

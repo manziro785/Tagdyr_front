@@ -1,23 +1,25 @@
 "use client";
 
 import { GitCompareArrows, Home, Medal, Trophy, User } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+
+import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
-  { href: "/lives", label: "Жизни", icon: User },
-  { href: "/play", label: "Игра", icon: Home },
-  { href: "/rating", label: "Рейтинг", icon: Medal },
-  { href: "/compare", label: "Сравнить", icon: GitCompareArrows },
-  { href: "/profile", label: "Профиль", icon: Trophy },
+  { href: "/lives", key: "lives", icon: User },
+  { href: "/play", key: "play", icon: Home },
+  { href: "/rating", key: "rating", icon: Medal },
+  { href: "/compare", key: "compare", icon: GitCompareArrows },
+  { href: "/profile", key: "profile", icon: Trophy },
 ] as const;
 
 export function BottomNav({ playHref = "/lives" }: { playHref?: string }) {
+  const t = useTranslations("nav");
   const pathname = usePathname() ?? "";
   return (
     <nav className="sticky bottom-0 z-20 mt-auto flex h-[60px] shrink-0 items-center justify-around border-t border-tg-line-soft bg-tg-card-2 lg:hidden">
-      {ITEMS.map(({ href, label, icon: Icon }) => {
+      {ITEMS.map(({ href, key, icon: Icon }) => {
         const target = href === "/play" ? playHref : href;
         const active =
           href === "/play"
@@ -34,7 +36,7 @@ export function BottomNav({ playHref = "/lives" }: { playHref?: string }) {
           >
             <Icon size={21} strokeWidth={2} />
             <span className="text-[9.5px] font-extrabold tracking-[0.1px]">
-              {label}
+              {t(key)}
             </span>
           </Link>
         );

@@ -1,4 +1,5 @@
 import { Coins, Heart, Smile, Zap, type LucideIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 import type { Stats } from "../model/types";
@@ -16,7 +17,6 @@ export function moneyPct(money: number): number {
 
 export interface StatView {
   key: keyof Stats;
-  label: string;
   icon: LucideIcon;
   value: string;
   pct: number;
@@ -28,7 +28,6 @@ export function statViews(stats: Stats): StatView[] {
   return [
     {
       key: "money",
-      label: "Деньги",
       icon: Coins,
       value: formatMoney(stats.money),
       pct: moneyPct(stats.money),
@@ -36,7 +35,6 @@ export function statViews(stats: Stats): StatView[] {
     },
     {
       key: "energy",
-      label: "Энергия",
       icon: Zap,
       value: `${Math.round(stats.energy)}%`,
       pct: stats.energy,
@@ -44,7 +42,6 @@ export function statViews(stats: Stats): StatView[] {
     },
     {
       key: "mood",
-      label: "Настроение",
       icon: Smile,
       value: `${Math.round(stats.mood)}%`,
       pct: stats.mood,
@@ -52,7 +49,6 @@ export function statViews(stats: Stats): StatView[] {
     },
     {
       key: "relationships",
-      label: "Отношения",
       icon: Heart,
       value: `${Math.round(stats.relationships)}%`,
       pct: stats.relationships,
@@ -64,6 +60,9 @@ export function statViews(stats: Stats): StatView[] {
 
 /** Ряд из четырёх мини-статов (вариант C дизайна). */
 export function StatsRow({ stats, className }: { stats: Stats; className?: string }) {
+  // next-intl отдаёт useTranslations и серверным компонентам — StatsRow
+  // рендерится в том числе на публичной share-странице
+  const t = useTranslations("stats");
   return (
     <div className={cn("grid grid-cols-4 gap-2", className)}>
       {statViews(stats).map((s) => (
@@ -83,7 +82,9 @@ export function StatsRow({ stats, className }: { stats: Stats; className?: strin
               style={{ width: `${s.pct}%`, background: s.color }}
             />
           </span>
-          <span className="text-[9.5px] font-bold tracking-[0.1px] text-tg-muted">{s.label}</span>
+          <span className="text-[9.5px] font-bold tracking-[0.1px] text-tg-muted">
+            {t(s.key)}
+          </span>
         </div>
       ))}
     </div>

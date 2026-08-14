@@ -1,8 +1,9 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { SCENE_SRC } from "@/entities/game/ui/SceneBackground";
 import type { SceneName } from "@/entities/game/model/types";
 import { GameTopNav } from "./GameTopNav";
+import { Link } from "@/i18n/navigation";
 
 /**
  * Десктоп-каркас игровых экранов. На мобильных не делает ничего — отдаёт
@@ -20,6 +21,7 @@ export function GameFrame({
   scene?: SceneName;
   children: React.ReactNode;
 }) {
+  const t = useTranslations("common");
   return (
     <div className="lg:relative lg:min-h-dvh">
       {/* сцена: fixed, чтобы покрывать вьюпорт целиком при любой высоте контента */}
@@ -34,7 +36,7 @@ export function GameFrame({
           href="/"
           className="font-display text-[24px] font-bold tracking-[-0.5px] text-tg-brown transition-opacity hover:opacity-80"
         >
-          Тагдыр
+          {t("appName")}
         </Link>
         <GameTopNav />
       </header>

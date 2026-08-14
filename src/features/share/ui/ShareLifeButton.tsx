@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useShareLink } from "@/entities/meta/api";
 import { useAuthStore } from "@/entities/session/model/auth-store";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 type Status = "idle" | "copied" | "error";
 
@@ -26,6 +27,8 @@ export function ShareLifeButton({
   title?: string;
   className?: string;
 }) {
+  const t = useTranslations("share");
+  const tc = useTranslations("common");
   const isUser = useAuthStore((s) => s.mode) === "user";
   const shareLink = useShareLink();
   const [status, setStatus] = useState<Status>("idle");
@@ -38,10 +41,10 @@ export function ShareLifeButton({
     shareLink.mutate(lifeId, {
       onSuccess: async ({ token }) => {
         const url = `${window.location.origin}/s/${token}`;
-        const text = title ? `Моя жизнь в «Тагдыр»: ${title}` : "Моя жизнь в «Тагдыр»";
+        const text = title ? t("textWithTitle", { title }) : t("text");
         try {
           if (typeof navigator.share === "function") {
-            await navigator.share({ title: "Тагдыр", text, url });
+            await navigator.share({ title: tc("appName"), text, url });
             return;
           }
           await navigator.clipboard.writeText(url);
@@ -57,12 +60,12 @@ export function ShareLifeButton({
   };
 
   const label = shareLink.isPending
-    ? "Готовлю ссылку…"
+    ? t("preparing")
     : status === "copied"
-      ? "Ссылка скопирована"
+      ? t("copied")
       : status === "error"
-        ? "Не вышло — ещё раз?"
-        : "Поделиться жизнью";
+        ? t("failed")
+        : t("idle");
 
   return (
     <button

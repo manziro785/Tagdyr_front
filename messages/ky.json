@@ -1,0 +1,61 @@
+{
+  "common": {
+    "appName": "Тагдыр",
+    "loading": "Тагдыр…",
+    "currency": "сом",
+    "next": "Андан ары",
+    "signOut": "Чыгуу",
+    "myLives": "Менин өмүрлөрүм",
+    "backToLives": "← Менин өмүрлөрүм"
+  },
+  "nav": {
+    "lives": "Өмүрлөр",
+    "play": "Оюн",
+    "rating": "Рейтинг",
+    "compare": "Салыштыруу",
+    "profile": "Профиль"
+  },
+  "stats": {
+    "money": "Акча",
+    "energy": "Күч",
+    "mood": "Маанай",
+    "relationships": "Мамиле"
+  },
+  "locale": {
+    "switchLabel": "Тил",
+    "ru": "Русский",
+    "ky": "Кыргызча",
+    "en": "English"
+  },
+  "auth": {
+    "or": "же",
+    "fields": {
+      "email": "Почта",
+      "password": "Сырсөз",
+      "name": "Атыңыз ким"
+    },
+    "login": {
+      "title": "Кирүү",
+      "submit": "Кирүү",
+      "toRegister": "Жаңы өмүр баштоо"
+    },
+    "register": {
+      "title": "Жаңы өмүр баштоо",
+      "toLogin": "Кирүү"
+    }
+  },
+  "landing": {
+    "signIn": "Кирүү",
+    "startLife": "Өмүр баштоо",
+    "continueLife": "Өмүрдү улантуу",
+    "myLivesArrow": "Менин өмүрлөрүм →"
+  },
+  "lives": {
+    "yours": "Сиздин өмүрлөрүңүз",
+    "start": "Жаңы өмүр баштоо"
+  },
+  "profile": {
+    "title": "Профиль",
+    "guest": "Конок"
+  }
+}

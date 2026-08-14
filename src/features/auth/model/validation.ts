@@ -2,30 +2,33 @@
  * Клиентская валидация auth-форм. Дублирует правила бэкенда
  * (packages/schemas: email + пароль 8–72), чтобы не гонять на сервер
  * заведомо пустые/битые формы.
+ *
+ * Возвращает КЛЮЧ сообщения из словаря auth.errors, а не сам текст:
+ * подставить перевод должна форма, которая знает текущую локаль.
  */
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export function emailError(email: string): string | undefined {
-  if (!email) return "Укажи почту";
-  if (!EMAIL_RE.test(email)) return "Почта выглядит неправильно — проверь адрес";
+  if (!email) return "emailRequired";
+  if (!EMAIL_RE.test(email)) return "emailInvalid";
   return undefined;
 }
 
 export function loginPasswordError(password: string): string | undefined {
-  if (!password) return "Введи пароль";
+  if (!password) return "passwordRequired";
   return undefined;
 }
 
 export function newPasswordError(password: string): string | undefined {
-  if (!password) return "Придумай пароль";
-  if (password.length < 8) return "Пароль короткий — нужно от 8 символов";
-  if (password.length > 72) return "Пароль слишком длинный — максимум 72 символа";
+  if (!password) return "passwordNew";
+  if (password.length < 8) return "passwordShort";
+  if (password.length > 72) return "passwordLong";
   return undefined;
 }
 
 export function displayNameError(name: string): string | undefined {
-  if (!name.trim()) return "Скажи, как тебя звать";
-  if (name.trim().length > 60) return "Имя слишком длинное — максимум 60 символов";
+  if (!name.trim()) return "nameRequired";
+  if (name.trim().length > 60) return "nameLong";
   return undefined;
 }

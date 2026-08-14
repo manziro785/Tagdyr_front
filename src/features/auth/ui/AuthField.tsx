@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import { Eye, EyeOff, type LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 type AuthFieldProps = {
   label: string;
@@ -28,6 +29,7 @@ export function AuthField({
   defaultValue,
   error,
 }: AuthFieldProps) {
+  const t = useTranslations("auth");
   const id = useId();
   const isPassword = type === "password";
   const [revealed, setRevealed] = useState(false);
@@ -64,7 +66,7 @@ export function AuthField({
           <button
             type="button"
             onClick={() => setRevealed((v) => !v)}
-            aria-label={revealed ? "Скрыть пароль" : "Показать пароль"}
+            aria-label={revealed ? t("hidePassword") : t("showPassword")}
             className="shrink-0 text-tg-faint transition-colors hover:text-tg-brown-2"
           >
             {revealed ? <EyeOff size={17} strokeWidth={2} /> : <Eye size={17} strokeWidth={2} />}

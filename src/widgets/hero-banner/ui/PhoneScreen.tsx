@@ -11,11 +11,12 @@ import {
 import { cn } from "@/lib/utils";
 import { SCENE, type SceneChoice, type SceneStat } from "../model/scene";
 import { Avatar } from "./Avatar";
+import { useTranslations } from "next-intl";
 
 function StatusBar() {
   return (
     <div className="flex h-11 shrink-0 items-center justify-between px-[22px] text-[14px] font-extrabold text-tg-brown tabular-nums">
-      <span>9:41</span>
+      <span>5:32</span>
       <span className="flex items-center gap-[7px]">
         <svg
           width="18"
@@ -64,6 +65,7 @@ function StatusBar() {
 }
 
 function StatMini({ stat }: { stat: SceneStat }) {
+  const ts = useTranslations("stats");
   const Icon = stat.icon;
   return (
     <div className="flex flex-col items-center gap-[5px]">
@@ -83,13 +85,15 @@ function StatMini({ stat }: { stat: SceneStat }) {
         />
       </span>
       <span className="text-[9.5px] font-bold tracking-[0.1px] text-tg-muted">
-        {stat.label}
+        {ts(stat.labelKey)}
       </span>
     </div>
   );
 }
 
 function Choice({ choice }: { choice: SceneChoice }) {
+  const t = useTranslations("phone");
+  const ts = useTranslations("stats");
   return (
     <button
       type="button"
@@ -108,7 +112,7 @@ function Choice({ choice }: { choice: SceneChoice }) {
             choice.primary ? "text-[#5A3F1C]" : "text-tg-brown",
           )}
         >
-          {choice.text}
+          {t(`demo.${choice.textKey}`)}
         </span>
         <span className="mt-[5px] flex flex-wrap gap-[7px]">
           {choice.deltas.map((d, i) => (
@@ -119,14 +123,15 @@ function Choice({ choice }: { choice: SceneChoice }) {
                 d.dir === "up" ? "text-tg-sage-deep" : "text-tg-terracotta",
               )}
             >
-              {d.dir === "up" ? "↑" : "↓"} {d.text}
+              {d.dir === "up" ? "↑" : "↓"}{" "}
+              {d.labelKey ? ts(d.labelKey) : t(`demo.${d.text}`)}
             </span>
           ))}
         </span>
       </span>
       {choice.chance && (
         <span className="flex shrink-0 items-center gap-1 rounded-full bg-tg-terra-tint px-[9px] py-[5px] text-[11.5px] font-extrabold text-tg-terracotta">
-          Шанс {choice.chance}%
+          {t("chance", { value: choice.chance })}
         </span>
       )}
     </button>
@@ -134,15 +139,16 @@ function Choice({ choice }: { choice: SceneChoice }) {
 }
 
 function BottomNav() {
+  const t = useTranslations("phone.tabs");
   const items = [
-    { id: "play", label: "Игра", icon: Home, active: true },
-    { id: "lives", label: "Жизни", icon: User, active: false },
-    { id: "budget", label: "Бюджет", icon: Calculator, active: false },
-    { id: "profile", label: "Профиль", icon: Trophy, active: false },
+    { id: "play", icon: Home, active: true },
+    { id: "lives", icon: User, active: false },
+    { id: "budget", icon: Calculator, active: false },
+    { id: "profile", icon: Trophy, active: false },
   ];
   return (
     <nav className="mt-auto flex h-[60px] shrink-0 items-center justify-around border-t border-tg-line-soft bg-tg-card-2">
-      {items.map(({ id, label, icon: Icon, active }) => (
+      {items.map(({ id, icon: Icon, active }) => (
         <button
           key={id}
           type="button"
@@ -153,7 +159,7 @@ function BottomNav() {
         >
           <Icon size={21} strokeWidth={2} />
           <span className="text-[9.5px] font-extrabold tracking-[0.1px]">
-            {label}
+            {t(id)}
           </span>
         </button>
       ))}
@@ -162,6 +168,7 @@ function BottomNav() {
 }
 
 export function PhoneScreen() {
+  const t = useTranslations("phone.demo");
   return (
     <div className="relative flex h-[844px] w-[390px] flex-col bg-[#ECDDC2] text-tg-brown antialiased">
       <div className="absolute inset-0 overflow-hidden">
@@ -180,11 +187,10 @@ export function PhoneScreen() {
           <Avatar size={62} breathe />
           <div className="min-w-0 flex-1">
             <div className="font-display text-[18px] font-bold tracking-[-0.2px] text-tg-brown">
-              {SCENE.name}, {SCENE.age}
+              {t("name")}, {SCENE.age}
             </div>
             <div className="mt-0.5 flex items-center gap-1 text-[12px] font-bold text-tg-muted">
-              <MapPin size={12} strokeWidth={2.2} /> {SCENE.place} ·{" "}
-              {SCENE.stage}
+              <MapPin size={12} strokeWidth={2.2} /> {t("place")} · {t("stage")}
             </div>
           </div>
           <button
@@ -210,10 +216,10 @@ export function PhoneScreen() {
               strokeWidth={0}
             />
             <div className="mb-1.5 font-display text-[11px] font-bold tracking-[0.6px] text-tg-amber-deep uppercase">
-              {SCENE.event.kicker}
+              {t("eventKicker")}
             </div>
             <p className="m-0 text-[15px] leading-[1.55] font-medium text-tg-brown-2 text-pretty">
-              {SCENE.event.text}
+              {t("eventText")}
             </p>
           </div>
 

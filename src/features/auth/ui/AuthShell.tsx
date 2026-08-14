@@ -1,4 +1,7 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+
+import { Link } from "@/i18n/navigation";
+import { LocaleSwitcher } from "@/features/locale/ui/LocaleSwitcher";
 
 /**
  * Общий каркас экранов аутентификации «Тагдыр»:
@@ -6,6 +9,7 @@ import Link from "next/link";
  * вертикально отцентрованный контент.
  */
 export function AuthShell({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("common");
   return (
     <main className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 py-10 font-sans text-tg-brown">
       {/* фон: размытая долина с юртами + тёплый скрим */}
@@ -25,8 +29,10 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         href="/"
         className="absolute top-5 left-1/2 -translate-x-1/2 font-display text-lg font-bold tracking-[-0.5px] text-tg-brown/70 transition-colors hover:text-tg-brown sm:left-6 sm:translate-x-0"
       >
-        Тагдыр
+        {t("appName")}
       </Link>
+
+      <LocaleSwitcher className="absolute top-4 right-4 sm:top-5 sm:right-6" />
 
       <div className="flex w-full max-w-[400px] flex-col gap-[22px]">
         {children}

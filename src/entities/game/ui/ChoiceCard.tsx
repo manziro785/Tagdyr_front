@@ -1,38 +1,39 @@
 import { AlertTriangle, ArrowDown, ArrowUp, Lock } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 import type { EventChoice, Stats } from "../model/types";
 import { formatMoney } from "./stats";
-
-const STAT_LABEL: Record<keyof Stats, string> = {
-  money: "",
-  energy: "Энергия",
-  mood: "Настроение",
-  relationships: "Отношения",
-};
 
 interface DeltaChip {
   text: string;
   dir: "up" | "down";
 }
 
+/** Как назвать стат и долг — приходит из словаря вызывающего компонента. */
+export interface DeltaLabels {
+  stat: (key: Exclude<keyof Stats, "money">) => string;
+  debt: (amount: string) => string;
+  currency: string;
+}
+
 /** Плашки последствий выбора — из effects, без раскрытия точных цифр статов. */
-export function choiceDeltas(choice: EventChoice): DeltaChip[] {
+export function choiceDeltas(choice: EventChoice, labels: DeltaLabels): DeltaChip[] {
   const chips: DeltaChip[] = [];
   const s = choice.effects.stats;
   if (s?.money) {
     chips.push({
-      text: `${s.money > 0 ? "+" : "−"}${formatMoney(Math.abs(s.money))} с`,
+      text: `${s.money > 0 ? "+" : "−"}${formatMoney(Math.abs(s.money))} ${labels.currency}`,
       dir: s.money > 0 ? "up" : "down",
     });
   }
   for (const key of ["energy", "mood", "relationships"] as const) {
     const v = s?.[key];
-    if (v) chips.push({ text: STAT_LABEL[key], dir: v > 0 ? "up" : "down" });
+    if (v) chips.push({ text: labels.stat(key), dir: v > 0 ? "up" : "down" });
   }
   if (choice.effects.debt) {
     chips.push({
-      text: `долг ${formatMoney(choice.effects.debt.amount)} с`,
+      text: labels.debt(`${formatMoney(choice.effects.debt.amount)} ${labels.currency}`),
       dir: "down",
     });
   }
@@ -48,7 +49,14 @@ export function ChoiceCard({
   disabled?: boolean;
   onSelect: () => void;
 }) {
-  const deltas = choiceDeltas(choice);
+  const t = useTranslations("choice");
+  const ts = useTranslations("stats");
+  const tc = useTranslations("common");
+  const deltas = choiceDeltas(choice, {
+    stat: (key) => ts(key),
+    debt: (amount) => t("debt", { amount }),
+    currency: tc("currency"),
+  });
   return (
     <button
       type="button"
@@ -94,12 +102,13 @@ export function ChoiceCard({
       </span>
       {disabled ? (
         <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-tg-line-soft px-[9px] py-[5px] text-[11.5px] font-extrabold text-tg-muted">
-          <Lock size={12} strokeWidth={2.3} /> не хватает
+          <Lock size={12} strokeWidth={2.3} /> {t("notEnough")}
         </span>
       ) : (
         choice.chance !== undefined && (
           <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#F1D6CE] px-[9px] py-[5px] text-[11.5px] font-extrabold text-[#B5503C]">
-            <AlertTriangle size={12} strokeWidth={2.3} /> Шанс {choice.chance}%
+            <AlertTriangle size={12} strokeWidth={2.3} />{" "}
+            {t("chance", { value: choice.chance })}
           </span>
         )
       )}

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 
-import { authErrorMessage, useGoogleAuth } from "../model/use-auth";
+import { authErrorKey, useGoogleAuth } from "../model/use-auth";
 
 /**
  * Блок соц-входа под формами логина/регистрации.
@@ -84,8 +85,9 @@ function AppleMark() {
 
 /** Прежние заглушки, пока Google-вход не сконфигурирован. */
 function DisabledSocialRow() {
+  const t = useTranslations("auth.social");
   return (
-    <div className="flex gap-2.5" title="Скоро — пока вход по почте или гостем">
+    <div className="flex gap-2.5" title={t("soon")}>
       <button
         type="button"
         disabled
@@ -105,6 +107,8 @@ function DisabledSocialRow() {
 }
 
 export function SocialAuth({ context }: { context: "signin" | "signup" }) {
+  const t = useTranslations("auth");
+  const locale = useLocale();
   const googleAuth = useGoogleAuth();
   const containerRef = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
@@ -134,7 +138,8 @@ export function SocialAuth({ context }: { context: "signin" | "signup" }) {
           size: "large",
           text: context === "signup" ? "signup_with" : "signin_with",
           width: Math.min(400, Math.max(200, el.offsetWidth || 336)),
-          locale: "ru",
+          // GIS рисует свою кнопку — пусть подписи совпадают с языком игры
+          locale,
         });
       })
       .catch(() => {
@@ -144,7 +149,7 @@ export function SocialAuth({ context }: { context: "signin" | "signup" }) {
     return () => {
       cancelled = true;
     };
-  }, [context]);
+  }, [context, locale]);
 
   if (!CLIENT_ID || failed) return <DisabledSocialRow />;
 
@@ -153,12 +158,12 @@ export function SocialAuth({ context }: { context: "signin" | "signup" }) {
       <div ref={containerRef} className="flex min-h-11 justify-center" />
       {googleAuth.isPending && (
         <p className="m-0 text-center text-[12.5px] font-bold text-tg-muted">
-          Входим через Google…
+          {t("social.googlePending")}
         </p>
       )}
       {googleAuth.isError && (
         <p className="m-0 rounded-xl bg-[#F1D6CE] px-3 py-2 text-[12.5px] font-bold text-[#B5503C]">
-          {authErrorMessage(googleAuth.error)}
+          {t(`errors.${authErrorKey(googleAuth.error)}`)}
         </p>
       )}
     </div>

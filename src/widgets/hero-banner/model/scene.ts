@@ -1,9 +1,15 @@
 import type { LucideIcon } from "lucide-react";
 import { Coins, Heart, Smile, Zap } from "lucide-react";
 
+/**
+ * Демо-сцена в макете телефона на лендинге. Цифры и цвета — здесь, тексты —
+ * в словаре (phone.demo / stats): витрина должна говорить на языке посетителя.
+ */
+
 export type SceneStat = {
   key: "money" | "energy" | "mood" | "rel";
-  label: string;
+  /** Ключ подписи в словаре stats. */
+  labelKey: "money" | "energy" | "mood" | "relationships";
   icon: LucideIcon;
   value: string;
   unit?: string;
@@ -13,24 +19,26 @@ export type SceneStat = {
   filled?: boolean;
 };
 
-export type SceneDelta = { text: string; dir: "up" | "down" };
+export type SceneDelta = {
+  /** Готовая подпись (сумма) или ключ стата — что-то одно. */
+  text?: string;
+  labelKey?: "money" | "energy" | "mood" | "relationships";
+  dir: "up" | "down";
+};
 
 export type SceneChoice = {
-  text: string;
+  textKey: "choiceGift" | "choiceHelp" | "choiceSkip";
   primary?: boolean;
   chance?: number;
   deltas: SceneDelta[];
 };
 
 export const SCENE = {
-  name: "Азамат",
   age: 18,
-  stage: "Молодость",
-  place: "Двор в Бишкеке",
   stats: [
     {
       key: "money",
-      label: "Деньги",
+      labelKey: "money",
       icon: Coins,
       value: "5 000",
       unit: "с",
@@ -40,7 +48,7 @@ export const SCENE = {
     },
     {
       key: "energy",
-      label: "Энергия",
+      labelKey: "energy",
       icon: Zap,
       value: "80%",
       pct: 80,
@@ -49,7 +57,7 @@ export const SCENE = {
     },
     {
       key: "mood",
-      label: "Настроение",
+      labelKey: "mood",
       icon: Smile,
       value: "75%",
       pct: 75,
@@ -58,7 +66,7 @@ export const SCENE = {
     },
     {
       key: "rel",
-      label: "Отношения",
+      labelKey: "relationships",
       icon: Heart,
       value: "60%",
       pct: 60,
@@ -67,33 +75,29 @@ export const SCENE = {
       filled: true,
     },
   ] satisfies SceneStat[],
-  event: {
-    kicker: "Двор · той у родни",
-    text: "Старший двоюродный женится — вся родня скидывается на подарок. Мама шепчет: «С пустыми руками неудобно, минимум 2 000…». А стипендия только-только пришла. Кудай буюрса, и тебе так сыграют.",
-  },
   choices: [
     {
-      text: "Скинуться на подарок — 2 000 сом",
+      textKey: "choiceGift",
       primary: true,
       deltas: [
-        { text: "−2 000 с", dir: "down" },
-        { text: "Отношения", dir: "up" },
+        { text: "deltaGift", dir: "down" },
+        { labelKey: "relationships", dir: "up" },
       ],
     },
     {
-      text: "Дать 500 и помочь с тоем руками",
+      textKey: "choiceHelp",
       chance: 65,
       deltas: [
-        { text: "−500 с", dir: "down" },
-        { text: "Энергия", dir: "down" },
-        { text: "Отношения", dir: "up" },
+        { text: "deltaHelp", dir: "down" },
+        { labelKey: "energy", dir: "down" },
+        { labelKey: "relationships", dir: "up" },
       ],
     },
     {
-      text: "Не ходить, сберечь деньги",
+      textKey: "choiceSkip",
       deltas: [
-        { text: "Деньги", dir: "up" },
-        { text: "Отношения", dir: "down" },
+        { labelKey: "money", dir: "up" },
+        { labelKey: "relationships", dir: "down" },
       ],
     },
   ] satisfies SceneChoice[],

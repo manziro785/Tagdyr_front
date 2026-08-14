@@ -7,9 +7,12 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+
+import { SessionAwareLink } from "@/features/auth/ui/SessionAwareLink";
 
 import { ENDINGS } from "@/entities/game/content/endings";
+import { Link } from "@/i18n/navigation";
 
 /** Концовки, которые показываем на лендинге как «истории». */
 const STORY_CODES = ["entrepreneur", "support", "mountain_soul"] as const;
@@ -19,22 +22,19 @@ const STEPS = [
     icon: UserRound,
     color: "var(--color-tg-sage-deep)",
     tint: "var(--color-tg-sage-tint)",
-    title: "Выбери, где начать",
-    text: "Двор в Бишкеке, село в Нарыне или центр города. У каждого старта свои деньги, характер и свои соблазны.",
+    key: "step1",
   },
   {
     icon: CalendarClock,
     color: "var(--color-tg-amber-deep)",
     tint: "var(--color-tg-amber-tint)",
-    title: "Живи карточка за карточкой",
-    text: "Пять сезонов — от 17 лет до зрелости. Той у родни, первая зарплата, долг под проценты: каждый выбор двигает деньги, энергию, настроение и отношения.",
+    key: "step2",
   },
   {
     icon: Sparkles,
     color: "var(--color-tg-terra-deep)",
     tint: "var(--color-tg-terra-tint)",
-    title: "Доживи до своей концовки",
-    text: `${ENDINGS.length} судеб — от «Предпринимателя» до «Души гор». Между сезонами годы летят: накопления тихо растут, а долги не спят.`,
+    key: "step3",
   },
 ] as const;
 
@@ -43,6 +43,9 @@ const STEPS = [
  * Истории — реальные концовки из контента игры, не выдуманные отзывы.
  */
 export function LandingSections() {
+  const t = useTranslations("landing.sections");
+  const tl = useTranslations("landing");
+  const tc = useTranslations("common");
   const stories = STORY_CODES.map((code) =>
     ENDINGS.find((e) => e.code === code),
   ).filter((e): e is (typeof ENDINGS)[number] => Boolean(e));
@@ -52,15 +55,15 @@ export function LandingSections() {
       {/* как играть */}
       <section id="how" className="mx-auto w-full max-w-6xl scroll-mt-8 px-6 py-16 lg:px-8 lg:py-20">
         <span className="font-display text-[12px] font-bold tracking-[1px] text-tg-amber-deep uppercase">
-          Как играть
+          {t("howKicker")}
         </span>
         <h2 className="mt-2 mb-8 max-w-xl font-display text-[30px] leading-[1.12] font-bold tracking-[-0.6px] text-balance lg:text-[38px]">
-          Три шага от выпускника до своей истории
+          {t("howTitle")}
         </h2>
         <div className="grid gap-4 md:grid-cols-3">
-          {STEPS.map(({ icon: Icon, color, tint, title, text }, i) => (
+          {STEPS.map(({ icon: Icon, color, tint, key }, i) => (
             <div
-              key={title}
+              key={key}
               className="flex flex-col gap-3 rounded-3xl border border-tg-line-soft bg-tg-card p-6 shadow-[0_6px_20px_rgba(110,70,30,0.05)]"
             >
               <div className="flex items-center justify-between">
@@ -75,10 +78,10 @@ export function LandingSections() {
                 </span>
               </div>
               <h3 className="m-0 font-display text-[18px] font-bold text-tg-brown">
-                {title}
+                {t(`${key}Title`)}
               </h3>
               <p className="m-0 text-[14px] leading-[1.6] font-medium text-tg-brown-2">
-                {text}
+                {t(`${key}Text`, { count: ENDINGS.length })}
               </p>
             </div>
           ))}
@@ -86,11 +89,11 @@ export function LandingSections() {
         <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-bold text-tg-muted">
           <span className="inline-flex items-center gap-1.5">
             <Coins size={14} strokeWidth={2.2} className="text-tg-amber-deep" />
-            Финграмотность зашита в механику, не в нотации
+            {t("noteFinance")}
           </span>
           <span className="inline-flex items-center gap-1.5">
             <BookOpen size={14} strokeWidth={2.2} className="text-tg-sage-deep" />
-            13 карточек знаний спрятаны в выборах
+            {t("noteCards")}
           </span>
         </div>
       </section>
@@ -98,10 +101,10 @@ export function LandingSections() {
       {/* истории */}
       <section id="stories" className="mx-auto w-full max-w-6xl scroll-mt-8 px-6 pb-16 lg:px-8 lg:pb-20">
         <span className="font-display text-[12px] font-bold tracking-[1px] text-tg-terra-deep uppercase">
-          Истории
+          {t("storiesKicker")}
         </span>
         <h2 className="mt-2 mb-8 max-w-xl font-display text-[30px] leading-[1.12] font-bold tracking-[-0.6px] text-balance lg:text-[38px]">
-          Одни и те же улицы — разные судьбы
+          {t("storiesTitle")}
         </h2>
         <div className="grid gap-4 md:grid-cols-3">
           {stories.map((ending) => (
@@ -127,18 +130,23 @@ export function LandingSections() {
 
         <div className="mt-10 flex flex-col items-center gap-4 rounded-[28px] border border-white/70 bg-[linear-gradient(120deg,#F7E6C6,#F4DDCF)] px-6 py-10 text-center">
           <h3 className="m-0 font-display text-[24px] font-bold tracking-[-0.4px] text-tg-brown lg:text-[28px]">
-            А какая судьба выпадет тебе?
+            {t("ctaTitle")}
           </h3>
           <p className="m-0 max-w-md text-[14.5px] leading-[1.6] font-medium text-tg-brown-2">
-            До трёх параллельных жизней — проверь, как сложилось бы, если бы
-            тогда решил иначе. Кудай буюрса.
+            {t("ctaText")}
           </p>
-          <Link
-            href="/auth/register"
+          <SessionAwareLink
+            guestHref="/auth/register"
+            userHref="/lives"
+            userLabel={
+              <>
+                <ArrowRight size={18} strokeWidth={2.6} /> {tl("continueLife")}
+              </>
+            }
             className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-[linear-gradient(180deg,#EFBE63,#E2A03A)] px-7 py-[15px] font-display text-base font-bold text-[#5A3F1C] shadow-[0_10px_24px_rgba(214,160,60,0.36)] transition-transform hover:-translate-y-px"
           >
-            <ArrowRight size={18} strokeWidth={2.6} /> Начать жизнь
-          </Link>
+            <ArrowRight size={18} strokeWidth={2.6} /> {tl("startLife")}
+          </SessionAwareLink>
         </div>
       </section>
 
@@ -146,15 +154,15 @@ export function LandingSections() {
       <footer className="border-t border-tg-line-soft">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-6 py-8 text-[13px] font-semibold text-tg-muted sm:flex-row lg:px-8">
           <span className="font-display text-[16px] font-bold text-tg-brown">
-            Тагдыр
+            {tc("appName")}
           </span>
-          <span>Игра про выборы, деньги и жизнь в Кыргызстане</span>
+          <span>{t("footerTagline")}</span>
           <span className="flex gap-4">
             <Link href="/about" className="hover:text-tg-brown">
-              О проекте
+              {t("footerAbout")}
             </Link>
             <Link href="/auth/login" className="hover:text-tg-brown">
-              Войти
+              {tl("signIn")}
             </Link>
           </span>
         </div>

@@ -4,6 +4,7 @@ import { Check, HelpCircle, Users } from "lucide-react";
 
 import { useAnswerDilemma, useDilemmaToday } from "@/entities/meta/api";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 /**
  * Дилемма дня: один вопрос на сутки (UTC), один ответ на игрока.
@@ -17,6 +18,7 @@ export function DailyDilemmaCard() {
   const answer = useAnswerDilemma();
 
   const answered = data?.myChoice ?? null;
+  const t = useTranslations("dilemma");
   const pending = answer.isPending;
 
   return (
@@ -24,7 +26,7 @@ export function DailyDilemmaCard() {
       <div className="flex items-baseline justify-between gap-2">
         <span className="inline-flex items-center gap-1.5 font-display text-[15px] font-semibold text-tg-brown lg:text-[19px]">
           <HelpCircle size={15} strokeWidth={2.3} className="text-tg-terra-deep" />
-          Дилемма дня
+          {t("title")}
         </span>
         {data && data.totalVotes > 0 && (
           <span className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-tg-muted">
@@ -34,12 +36,12 @@ export function DailyDilemmaCard() {
       </div>
 
       {isPending && !isError && (
-        <p className="m-0 text-[13px] font-semibold text-tg-muted">Загружаю вопрос дня…</p>
+        <p className="m-0 text-[13px] font-semibold text-tg-muted">{t("loading")}</p>
       )}
 
       {isError && (
         <p className="m-0 text-[13px] font-bold text-[#B5503C]">
-          Не удалось получить дилемму. Обнови страницу.
+          {t("error")}
         </p>
       )}
 
@@ -98,14 +100,12 @@ export function DailyDilemmaCard() {
           </div>
 
           <p className="m-0 text-[11.5px] font-semibold text-tg-muted">
-            {answered !== null
-              ? "Голос учтён. Новый вопрос — завтра."
-              : "Выбери вариант — покажу, как ответили остальные."}
+            {answered !== null ? t("answered") : t("pick")}
           </p>
 
           {answer.isError && (
             <p className="m-0 text-[12px] font-bold text-[#B5503C]">
-              Голос не прошёл. Попробуй ещё раз.
+              {t("voteFailed")}
             </p>
           )}
         </>

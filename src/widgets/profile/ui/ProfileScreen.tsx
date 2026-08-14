@@ -11,14 +11,8 @@ import type { KnowledgeCardCategory } from "@/entities/game/model/types";
 import { useAuthStore } from "@/entities/session/model/auth-store";
 import { BottomNav } from "@/widgets/game-nav/BottomNav";
 import { cn } from "@/lib/utils";
-
-const CATEGORY_LABEL: Record<KnowledgeCardCategory, string> = {
-  finance: "Финансы",
-  relationships: "Отношения",
-  health: "Здоровье",
-  career: "Карьера",
-  life: "Жизнь",
-};
+import { useTranslations } from "next-intl";
+import { LocaleSwitcher } from "@/features/locale/ui/LocaleSwitcher";
 
 const CATEGORY_STYLE: Record<KnowledgeCardCategory, string> = {
   finance: "bg-tg-amber-tint text-tg-amber-deep",
@@ -29,6 +23,7 @@ const CATEGORY_STYLE: Record<KnowledgeCardCategory, string> = {
 };
 
 export function ProfileScreen() {
+  const t = useTranslations("profile");
   const user = useAuthStore((s) => s.user);
   const mode = useAuthStore((s) => s.mode);
   const { data: endings } = useEndingsCollection();
@@ -41,12 +36,17 @@ export function ProfileScreen() {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:min-h-0 lg:max-w-none lg:bg-none">
       <header className="px-5 pt-5 lg:px-0 lg:pt-3">
-        <h1 className="m-0 font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown lg:text-[32px]">
-          Профиль
-        </h1>
+        <div className="flex items-start justify-between gap-3">
+          <h1 className="m-0 font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown lg:text-[32px]">
+            {t("title")}
+          </h1>
+          {/* на мобиле это единственная точка входа в смену языка: в BottomNav места нет */}
+          <LocaleSwitcher className="lg:hidden" />
+        </div>
         <p className="mt-0.5 text-[13px] font-semibold text-tg-muted lg:text-[14px]">
-          {mode === "user" ? (user?.displayName ?? "Игрок") : "Гость"} · коллекция собирается за
-          несколько жизней
+          {t("subtitle", {
+            who: mode === "user" ? (user?.displayName ?? t("player")) : t("guest"),
+          })}
         </p>
       </header>
 
@@ -55,10 +55,13 @@ export function ProfileScreen() {
         <section className="lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
           <div className="mb-2.5 flex items-baseline justify-between">
             <span className="inline-flex items-center gap-1.5 font-display text-[15px] font-semibold text-tg-brown">
-              <Trophy size={15} strokeWidth={2.3} className="text-tg-amber-deep" /> Концовки
+              <Trophy size={15} strokeWidth={2.3} className="text-tg-amber-deep" /> {t("endings")}
             </span>
             <span className="text-xs font-bold text-tg-muted">
-              открыто {endings?.unlocked ?? 0} из {endings?.total ?? "…"}
+              {t("endingsCount", {
+                unlocked: endings?.unlocked ?? 0,
+                total: endings?.total ?? "…",
+              })}
             </span>
           </div>
           <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4 lg:gap-3.5">
@@ -97,7 +100,7 @@ export function ProfileScreen() {
                       locked ? "text-tg-faint" : "text-tg-muted",
                     )}
                   >
-                    {locked ? "Эта судьба ещё не прожита." : e.description}
+                    {locked ? t("endingLocked") : e.description}
                   </p>
                 </div>
               );
@@ -109,10 +112,13 @@ export function ProfileScreen() {
         <section className="lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
           <div className="mb-2.5 flex items-baseline justify-between">
             <span className="inline-flex items-center gap-1.5 font-display text-[15px] font-semibold text-tg-brown">
-              <BookOpen size={15} strokeWidth={2.3} className="text-tg-sage-deep" /> Карточки знаний
+              <BookOpen size={15} strokeWidth={2.3} className="text-tg-sage-deep" /> {t("cards")}
             </span>
             <span className="text-xs font-bold text-tg-muted">
-              собрано {cards?.unlocked ?? 0} из {cards?.total ?? "…"}
+              {t("cardsCount", {
+                unlocked: cards?.unlocked ?? 0,
+                total: cards?.total ?? "…",
+              })}
             </span>
           </div>
           <div className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3">
@@ -143,7 +149,7 @@ export function ProfileScreen() {
                         locked ? "bg-tg-line-soft text-tg-faint" : CATEGORY_STYLE[card.category],
                       )}
                     >
-                      {CATEGORY_LABEL[card.category]}
+                      {t(`categories.${card.category}`)}
                     </span>
                   </div>
                   <p
@@ -152,9 +158,7 @@ export function ProfileScreen() {
                       locked ? "text-tg-faint" : "text-tg-brown-2",
                     )}
                   >
-                    {locked
-                      ? `Прячется в сезоне ${card.season}. Живи внимательнее.`
-                      : card.body}
+                    {locked ? t("cardLocked", { season: card.season }) : card.body}
                   </p>
                 </div>
               );

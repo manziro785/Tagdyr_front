@@ -1,6 +1,7 @@
 "use client";
 
 import { GitCompareArrows, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { useCompare, useLives } from "@/entities/game/api";
@@ -46,6 +47,8 @@ function keyDifferences(
 }
 
 function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
+  const t = useTranslations("compare");
+  const ts = useTranslations("stats");
   const ch = getCharacter(life.characterId);
   const ending = life.endingCode ? getEnding(life.endingCode) : null;
   const lastIndex = [...life.seasons]
@@ -55,25 +58,25 @@ function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
 
   const bars = [
     {
-      label: "Деньги",
+      label: ts("money"),
       pct: moneyPct(life.currentStats.money),
       color: "var(--color-tg-amber)",
       value: `${formatMoney(life.currentStats.money)} с`,
     },
     {
-      label: "Энергия",
+      label: ts("energy"),
       pct: life.currentStats.energy,
       color: "var(--color-tg-terracotta)",
       value: `${Math.round(life.currentStats.energy)}%`,
     },
     {
-      label: "Настроение",
+      label: ts("mood"),
       pct: life.currentStats.mood,
       color: "var(--color-tg-sage)",
       value: `${Math.round(life.currentStats.mood)}%`,
     },
     {
-      label: "Отношения",
+      label: ts("relationships"),
       pct: life.currentStats.relationships,
       color: "var(--color-tg-rose)",
       value: `${Math.round(life.currentStats.relationships)}%`,
@@ -84,7 +87,7 @@ function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
     <div className="flex flex-1 flex-col items-stretch gap-2.5 rounded-2xl border border-tg-line-soft bg-tg-card-2 p-3.5 shadow-[0_4px_14px_rgba(110,70,30,0.06)]">
       <div className="flex flex-col items-center gap-1.5">
         <span className="rounded-full bg-tg-line-soft px-2 py-0.5 font-mono text-[10px] font-bold text-tg-muted uppercase">
-          жизнь {side === "a" ? "А" : "Б"}
+          {side === "a" ? t("badgeA") : t("badgeB")}
         </span>
         <GameAvatar
           size={56}
@@ -104,13 +107,17 @@ function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
               : "bg-tg-line-soft text-tg-muted",
           )}
         >
+          {/* завершённая жизнь без концовки — это когда финал ещё не открыли;
+              писать «в пути» про прожитую жизнь было прямым враньём */}
           {ending
             ? `«${ending.title}»`
-            : `сезон ${life.currentSeason} · в пути`}
+            : life.status === "finished"
+              ? t("lived")
+              : t("inProgress", { season: life.currentSeason })}
         </span>
         {lastIndex != null && (
           <span className="text-[11px] font-bold text-tg-muted">
-            индекс жизни {lastIndex.toFixed(1)}
+            {t("lifeIndex", { value: lastIndex.toFixed(1) })}
           </span>
         )}
       </div>
@@ -135,6 +142,7 @@ function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
 }
 
 export function CompareScreen() {
+  const t = useTranslations("compare");
   const { data: lives } = useLives();
   const [aId, setAId] = useState<string | null>(null);
   const [bId, setBId] = useState<string | null>(null);
@@ -147,40 +155,43 @@ export function CompareScreen() {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:min-h-0 lg:max-w-[860px] lg:bg-none">
-      <header className="px-5 pt-5 lg:px-0 lg:pt-3">
+      <header className="px-5 pt-5 lg:px-0 lg:pt-10">
         <h1 className="m-0 inline-flex items-center gap-2 font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown lg:text-[32px]">
           <GitCompareArrows
             size={22}
             strokeWidth={2.2}
             className="text-tg-amber-deep"
           />
-          Две судьбы
+          {t("title")}
         </h1>
         <p className="mt-0.5 text-[13px] font-semibold text-tg-muted lg:text-[14px]">
-          Один старт — разные дороги. Выбери две жизни.
+          {t("subtitle")}
         </p>
       </header>
 
       <div className="flex flex-1 flex-col gap-4 px-5 pt-4 pb-6 lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
         {candidates.length < 2 ? (
           <div className="rounded-2xl border border-dashed border-tg-line bg-[rgba(251,244,232,0.5)] p-5 text-center text-[13.5px] font-bold text-tg-muted">
-            Для сравнения нужны хотя бы две жизни. Проживи ещё одну — интересно
-            же, как могло сложиться иначе.
+            {t("needTwo")}
           </div>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
+            <p className="m-0 text-[12.5px] font-semibold text-tg-muted">
+              {t("howTo")}
+            </p>
             {(["a", "b"] as const).map((side) => {
               const value = side === "a" ? aId : bId;
               const other = side === "a" ? bId : aId;
               return (
-                <div key={side} className="flex items-center gap-2">
-                  <span className="w-5 shrink-0 text-center font-mono text-[12px] font-bold text-tg-muted uppercase">
-                    {side === "a" ? "А" : "Б"}
+                <div key={side} className="flex flex-col gap-1.5">
+                  <span className="font-display text-[12px] font-bold tracking-[0.4px] text-tg-brown-2 uppercase">
+                    {side === "a" ? t("sideA") : t("sideB")}
                   </span>
-                  <div className="flex flex-1 flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1.5">
                     {candidates.map((l) => {
                       const ch = getCharacter(l.characterId);
                       const active = value === l.id;
+                      // одна жизнь не может стоять с обеих сторон сравнения
                       const disabled = other === l.id;
                       return (
                         <button
@@ -191,15 +202,27 @@ export function CompareScreen() {
                             side === "a" ? setAId(l.id) : setBId(l.id)
                           }
                           className={cn(
-                            "cursor-pointer rounded-full border px-3 py-1.5 text-[12px] font-extrabold transition-colors",
+                            "flex cursor-pointer flex-col items-start rounded-2xl border px-3 py-1.5 text-left transition-colors",
                             active
                               ? "border-tg-amber bg-tg-amber-tint text-tg-amber-deep"
                               : "border-tg-line bg-tg-card text-tg-brown-2",
                             disabled && "cursor-not-allowed opacity-40",
                           )}
                         >
-                          {ch?.name}, {l.age}
-                          {l.status === "finished" ? " ✓" : ""}
+                          {/* слот и статус: без них два прохождения одним
+                              персонажем выглядят одинаковыми кнопками */}
+                          <span className="text-[12px] font-extrabold">
+                            {t("option", {
+                              slot: l.slotIndex + 1,
+                              name: ch?.name ?? "",
+                              age: l.age,
+                            })}
+                          </span>
+                          <span className="text-[10.5px] font-bold opacity-70">
+                            {l.status === "finished"
+                              ? t("lived")
+                              : t("inProgress", { season: l.currentSeason })}
+                          </span>
                         </button>
                       );
                     })}
@@ -207,12 +230,17 @@ export function CompareScreen() {
                 </div>
               );
             })}
+            {!(aId && bId) && (
+              <p className="m-0 rounded-2xl border border-dashed border-tg-line bg-[rgba(251,244,232,0.5)] px-4 py-3 text-center text-[12.5px] font-bold text-tg-muted">
+                {aId || bId ? t("pickSecond") : t("pickNone")}
+              </p>
+            )}
           </div>
         )}
 
         {isLoading && aId && bId && (
           <div className="p-6 text-center text-sm font-bold text-tg-muted">
-            Сравниваю судьбы…
+            {t("loading")}
           </div>
         )}
 
@@ -230,7 +258,7 @@ export function CompareScreen() {
                     size={14}
                     className="fill-tg-amber-deep stroke-none"
                   />{" "}
-                  Где дороги разошлись
+                  {t("diffs")}
                 </span>
                 <div className="flex flex-col gap-2">
                   {diffs.map((d, i) => (

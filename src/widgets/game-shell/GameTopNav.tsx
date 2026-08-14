@@ -1,23 +1,26 @@
 "use client";
 
 import { GitCompareArrows, Home, LogOut, Medal, Trophy, User } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { useLives } from "@/entities/game/api";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useAuthStore } from "@/entities/session/model/auth-store";
 import { cn } from "@/lib/utils";
+import { LocaleSwitcher } from "@/features/locale/ui/LocaleSwitcher";
 
 const ITEMS = [
-  { href: "/lives", label: "Жизни", icon: User },
-  { href: "/play", label: "Игра", icon: Home },
-  { href: "/rating", label: "Рейтинг", icon: Medal },
-  { href: "/compare", label: "Сравнить", icon: GitCompareArrows },
-  { href: "/profile", label: "Профиль", icon: Trophy },
+  { href: "/lives", key: "lives", icon: User },
+  { href: "/play", key: "play", icon: Home },
+  { href: "/rating", key: "rating", icon: Medal },
+  { href: "/compare", key: "compare", icon: GitCompareArrows },
+  { href: "/profile", key: "profile", icon: Trophy },
 ] as const;
 
 /** Верхняя навигация игровых экранов на десктопе (на мобиле — BottomNav). */
 export function GameTopNav() {
+  const t = useTranslations("nav");
+  const tc = useTranslations("common");
   const pathname = usePathname() ?? "";
   const router = useRouter();
   const signOut = useAuthStore((s) => s.signOut);
@@ -28,8 +31,9 @@ export function GameTopNav() {
 
   return (
     <div className="flex items-center gap-2.5">
+      <LocaleSwitcher />
       <nav className="flex items-center gap-1 rounded-2xl border border-white/70 bg-white/55 p-1 shadow-[0_4px_14px_rgba(120,80,40,0.08)] backdrop-blur-md">
-        {ITEMS.map(({ href, label, icon: Icon }) => {
+        {ITEMS.map(({ href, key, icon: Icon }) => {
           const target = href === "/play" ? playHref : href;
           const isActive =
             href === "/play" ? pathname.startsWith("/play") : pathname.startsWith(href);
@@ -43,7 +47,7 @@ export function GameTopNav() {
               )}
             >
               <Icon size={15} strokeWidth={2.2} />
-              {label}
+              {t(key)}
             </Link>
           );
         })}
@@ -54,7 +58,7 @@ export function GameTopNav() {
           signOut();
           router.replace("/");
         }}
-        aria-label="Выйти"
+        aria-label={tc("signOut")}
         className="flex size-[38px] cursor-pointer items-center justify-center rounded-2xl border border-white/70 bg-white/55 text-tg-brown-2 shadow-[0_4px_14px_rgba(120,80,40,0.08)] backdrop-blur-md transition-colors hover:bg-white/80"
       >
         <LogOut size={16} strokeWidth={2.2} />

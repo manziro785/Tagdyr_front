@@ -2,11 +2,11 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { useRouter } from "next/navigation";
 
 import type { AuthResponse, GoogleAuthRequest } from "@/entities/game/api/types";
 import { useAuthStore } from "@/entities/session/model/auth-store";
 import { api } from "@/shared/ui/api/axiosInstance";
+import { useRouter } from "@/i18n/navigation";
 
 export interface LoginInput {
   email: string;
@@ -17,16 +17,16 @@ export interface RegisterInput extends LoginInput {
   displayName: string;
 }
 
-/** Человеческое сообщение об ошибке auth-запроса. */
-export function authErrorMessage(error: unknown): string {
+/** Ключ сообщения об ошибке auth-запроса из словаря auth.errors. */
+export function authErrorKey(error: unknown): string {
   if (isAxiosError(error)) {
-    if (error.response?.status === 401) return "Неверная почта или пароль.";
-    if (error.response?.status === 404) return "Вход через Google пока не подключён на сервере.";
-    if (error.response?.status === 409) return "Эта почта уже зарегистрирована — попробуй войти.";
-    if (error.response?.status === 422) return "Проверь поля: почта настоящая, пароль от 8 символов.";
-    if (!error.response) return "Сервер не отвечает. Можно зайти гостем — прогресс сохранится в браузере.";
+    if (error.response?.status === 401) return "invalidCredentials";
+    if (error.response?.status === 404) return "googleUnavailable";
+    if (error.response?.status === 409) return "emailTaken";
+    if (error.response?.status === 422) return "validation";
+    if (!error.response) return "offline";
   }
-  return "Что-то пошло не так. Попробуй ещё раз.";
+  return "unknown";
 }
 
 export function useLogin() {

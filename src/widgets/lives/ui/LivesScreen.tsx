@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight, Coins, LogOut, Plus, Lock, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import {
@@ -22,6 +22,7 @@ import { moneyPct, formatMoney } from "@/entities/game/ui/stats";
 import { useAuthStore } from "@/entities/session/model/auth-store";
 import { BottomNav } from "@/widgets/game-nav/BottomNav";
 import { cn } from "@/lib/utils";
+import { useRouter } from "@/i18n/navigation";
 
 const MAX_SLOTS = 3;
 
@@ -60,6 +61,8 @@ function SlotBars({ life }: { life: LifeSummary }) {
 }
 
 export function LivesScreen() {
+  const t = useTranslations("lives");
+  const tc = useTranslations("common");
   const router = useRouter();
   const signOut = useAuthStore((s) => s.signOut);
   const { data: lives, isLoading } = useLives();
@@ -112,7 +115,7 @@ export function LivesScreen() {
       {/* мобильная шапка: на десктопе логотип и выход живут в GameFrame */}
       <header className="flex items-center justify-between px-5 pt-5 lg:hidden">
         <span className="font-display text-[30px] font-bold tracking-[-0.5px] text-tg-brown">
-          Тагдыр
+          {tc("appName")}
         </span>
         <button
           type="button"
@@ -121,30 +124,30 @@ export function LivesScreen() {
             router.replace("/");
           }}
           className="flex size-[38px] cursor-pointer items-center justify-center rounded-xl border border-tg-line bg-white/45 text-tg-brown"
-          aria-label="Выйти"
+          aria-label={tc("signOut")}
         >
           <LogOut size={17} strokeWidth={2} />
         </button>
       </header>
       <p className="px-5 pt-0.5 text-[13px] font-semibold text-tg-muted lg:hidden">
-        Маленькие выборы складываются в судьбу
+        {tc("tagline")}
       </p>
 
       <div className="flex flex-1 flex-col gap-[11px] px-5 pt-4 pb-5 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start lg:gap-7 lg:p-0 lg:pt-3">
         <section className="flex flex-col gap-[11px] lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
         <div className="flex items-baseline justify-between">
           <span className="font-display text-[15px] font-semibold text-tg-brown lg:text-[19px]">
-            Ваши жизни
+            {t("yours")}
           </span>
           <span className="text-xs font-bold text-tg-muted">
-            {activeLives.length} из {MAX_SLOTS}
+            {t("counter", { used: activeLives.length, total: MAX_SLOTS })}
           </span>
         </div>
 
         <div className="flex flex-col gap-[9px]">
           {isLoading && (
             <div className="rounded-[18px] border border-tg-line-soft bg-tg-card p-4 text-center text-[13px] font-semibold text-tg-muted">
-              Загружаю жизни…
+              {t("loading")}
             </div>
           )}
           {activeLives.map((life) => {
@@ -170,12 +173,12 @@ export function LivesScreen() {
                   />
                   <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
                     <span className="font-display text-[15.5px] font-bold text-tg-brown">
-                      {ch?.name ?? "Безымянный"}, {life.age}
+                      {ch?.name ?? t("unnamed")}, {life.age}
                     </span>
                     <span className="text-xs font-semibold text-tg-muted">
                       {finished
-                        ? "Жизнь прожита — смотреть итог"
-                        : `${getSeason(life.currentSeason).title} · ${ageStage(life.age)}${run && run.phase !== "turn" ? " · межсезонье" : ""}`}
+                        ? t("finished")
+                        : `${getSeason(life.currentSeason).title} · ${ageStage(life.age)}${run && run.phase !== "turn" ? ` · ${t("interseason")}` : ""}`}
                     </span>
                     <SlotBars life={life} />
                   </span>
@@ -195,14 +198,14 @@ export function LivesScreen() {
                     }}
                     className="shrink-0 cursor-pointer rounded-lg bg-[#F1D6CE] px-2 py-1.5 text-[11px] font-extrabold text-[#B5503C]"
                   >
-                    Точно?
+                    {t("confirmDelete")}
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(life.id)}
                     className="shrink-0 cursor-pointer p-1.5 text-tg-faint hover:text-[#B5503C]"
-                    aria-label="Удалить жизнь"
+                    aria-label={t("deleteLabel")}
                   >
                     <Trash2 size={15} strokeWidth={2} />
                   </button>
@@ -217,9 +220,9 @@ export function LivesScreen() {
                 <Plus size={20} strokeWidth={2.4} />
               </span>
               <span className="text-sm font-bold text-tg-muted">
-                Свободный слот — выбери старт{" "}
-                <span className="lg:hidden">ниже</span>
-                <span className="hidden lg:inline">справа</span>
+                {t("freeSlot")}{" "}
+                <span className="lg:hidden">{t("freeSlotBelow")}</span>
+                <span className="hidden lg:inline">{t("freeSlotRight")}</span>
               </span>
             </div>
           )}
@@ -229,7 +232,7 @@ export function LivesScreen() {
         <section className="flex flex-col gap-[11px] lg:rounded-[28px] lg:border lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
         <div className="mt-[5px] flex items-baseline justify-between lg:mt-0">
           <span className="font-display text-[15px] font-semibold text-tg-brown lg:text-[19px]">
-            Новая жизнь — выбери старт
+            {t("newLife")}
           </span>
         </div>
 
@@ -283,7 +286,7 @@ export function LivesScreen() {
                   </span>
                   {locked ? (
                     <span className="inline-flex items-center gap-[3px] rounded-full bg-tg-line-soft px-2 py-[3px] text-[10.5px] font-extrabold text-tg-muted">
-                      <Lock size={11} strokeWidth={2.4} className="shrink-0" /> за концовку «Опора»
+                      <Lock size={11} strokeWidth={2.4} className="shrink-0" /> {t("lockedBy")}
                     </span>
                   ) : (
                     <span
@@ -299,6 +302,13 @@ export function LivesScreen() {
           })}
         </div>
 
+        {(roster?.items ?? []).some((ch) => !ch.unlocked) && (
+          <p className="m-0 flex items-start gap-1.5 text-[11.5px] leading-snug font-semibold text-tg-muted">
+            <Lock size={12} strokeWidth={2.4} className="mt-px shrink-0" />
+            {t("lockedHint")}
+          </p>
+        )}
+
         <div className="mt-auto pt-2">
           <CtaButton
             onClick={startNewLife}
@@ -308,14 +318,14 @@ export function LivesScreen() {
           >
             <Plus size={18} strokeWidth={2.6} />
             {freeSlots.length === 0
-              ? "Все слоты заняты"
+              ? t("slotsFull")
               : createLife.isPending
-                ? "Начинаем…"
-                : "Начать новую жизнь"}
+                ? t("creating")
+                : t("start")}
           </CtaButton>
           {createLife.isError && (
             <p className="mt-2 text-center text-xs font-bold text-[#B5503C]">
-              Не получилось создать жизнь. Попробуй ещё раз.
+              {t("createError")}
             </p>
           )}
         </div>

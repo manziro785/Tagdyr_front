@@ -22,34 +22,21 @@ import { getSeason, sceneForRun } from "@/entities/game/content/seasons";
 import { GameFrame } from "@/widgets/game-shell/GameFrame";
 import { MAX_SEASON } from "@/entities/game/model/finance";
 import type { RunState } from "@/entities/game/model/run-store";
+import { useTranslations } from "next-intl";
+
 import type { Stats } from "@/entities/game/model/types";
 import { CtaButton } from "@/entities/game/ui/CtaButton";
 import { GameAvatar } from "@/entities/game/ui/GameAvatar";
 import { formatMoney } from "@/entities/game/ui/stats";
 
+// подписи статов и флагов — в словаре (stats.* и flags.*)
 const STAT_META: Record<
   Exclude<keyof Stats, "money">,
-  { label: string; icon: "zap" | "smile" | "heart"; color: string; tint: string }
+  { icon: "zap" | "smile" | "heart"; color: string; tint: string }
 > = {
-  energy: { label: "Энергия", icon: "zap", color: "var(--color-tg-terracotta)", tint: "var(--color-tg-terra-tint)" },
-  mood: { label: "Настроение", icon: "smile", color: "var(--color-tg-sage)", tint: "var(--color-tg-sage-tint)" },
-  relationships: { label: "Отношения", icon: "heart", color: "var(--color-tg-rose)", tint: "var(--color-tg-rose-tint)" },
-};
-
-const FLAG_LABELS: Record<string, string> = {
-  higherEd: "Поступил в универ",
-  hasJob: "Есть работа",
-  hasBusiness: "Своё дело",
-  wentAbroad: "Уехал за границу",
-  backToVillage: "Вернулся к корням",
-  familyFirst: "Опора семьи",
-  savedEmergencyFund: "Подушка безопасности",
-  craftsman: "Ремесло в руках",
-  married: "Своя семья",
-  hasHome: "Своё жильё",
-  masterDegree: "Магистратура",
-  academicPath: "Академический путь",
-  communityPath: "Свой для людей",
+  energy: { icon: "zap", color: "var(--color-tg-terracotta)", tint: "var(--color-tg-terra-tint)" },
+  mood: { icon: "smile", color: "var(--color-tg-sage)", tint: "var(--color-tg-sage-tint)" },
+  relationships: { icon: "heart", color: "var(--color-tg-rose)", tint: "var(--color-tg-rose-tint)" },
 };
 
 /** Межсезонье: эпилог, сводка, взросление, «пока ты жил — долг рос», тизер. */
@@ -62,6 +49,10 @@ export function InterseasonView({
   onContinue: () => void;
   continuing: boolean;
 }) {
+  const t = useTranslations("interseason");
+  const ts = useTranslations("stats");
+  const tc = useTranslations("common");
+  const tf = useTranslations("flags");
   const close = run.seasonClose;
   if (!close) return null;
 
@@ -77,9 +68,10 @@ export function InterseasonView({
     return [{ key, delta, meta: STAT_META[key] }];
   });
   const moneyDelta = close.statDeltas.money ?? 0;
+  // tf.has отсекает флаги без витринной подписи — их в сводке не показываем
   const newFlagLabels = close.newFlags
-    .map((f) => FLAG_LABELS[f])
-    .filter((l): l is string => Boolean(l));
+    .filter((f) => tf.has(f))
+    .map((f) => tf(f));
 
   const debt = close.timeSkip.debts.find((d) => d.after > d.before);
   const savings = close.timeSkip.savings;
@@ -92,10 +84,10 @@ export function InterseasonView({
       <div className="lg:flex lg:items-end lg:justify-between lg:pt-3 lg:pb-4">
       <div className="px-[22px] pt-6 lg:p-0">
         <span className="inline-flex items-center gap-[5px] font-display text-[11px] font-bold tracking-[0.7px] text-tg-terra-deep uppercase">
-          <Clock size={13} strokeWidth={2.2} /> Конец сезона {run.season}
+          <Clock size={13} strokeWidth={2.2} /> {t("seasonEnd", { number: run.season })}
         </span>
         <h2 className="mt-1 font-display text-[25px] font-bold tracking-[-0.5px] text-tg-brown lg:text-[32px] lg:[text-shadow:0_1px_10px_rgba(250,240,224,0.6)]">
-          {season.title} — этап позади
+          {t("title", { season: season.title })}
         </h2>
       </div>
 
@@ -115,8 +107,8 @@ export function InterseasonView({
           <ArrowRight size={22} strokeWidth={2.4} />
           <span>
             {close.timeSkip.years > 0
-              ? `${close.timeSkip.years} ${close.timeSkip.years === 1 ? "год" : close.timeSkip.years < 5 ? "года" : "лет"}`
-              : "миг"}
+              ? t("years", { count: close.timeSkip.years })
+              : t("instant")}
           </span>
         </div>
         <div className="flex flex-col items-center gap-[7px]">
@@ -168,8 +160,8 @@ export function InterseasonView({
               }
             >
               {goalMet
-                ? `Цель сезона выполнена: ${goal.text.toLowerCase()}. ${goal.hint}.`
-                : `Цель «${goal.text.toLowerCase()}» не сложилась. ${goal.hint} — в следующей жизни попробуй иначе.`}
+                ? t("goalMet", { goal: goal.text.toLowerCase(), hint: goal.hint })
+                : t("goalMissed", { goal: goal.text.toLowerCase(), hint: goal.hint })}
             </p>
           </div>
         )}
@@ -181,23 +173,23 @@ export function InterseasonView({
         {(statRows.length > 0 || moneyDelta !== 0 || newFlagLabels.length > 0) && (
           <>
             <span className="font-display text-[15px] font-semibold text-tg-brown">
-              Что изменилось
+              {t("changes")}
             </span>
             <div className="flex flex-col gap-[7px]">
               {moneyDelta !== 0 && (
                 <SummaryRow
-                  label="Деньги"
+                  label={ts("money")}
                   color="var(--color-tg-amber-deep)"
                   tint="var(--color-tg-amber-tint)"
                   icon="coins"
-                  delta={`${moneyDelta > 0 ? "+" : "−"}${formatMoney(Math.abs(moneyDelta))} с`}
+                  delta={`${moneyDelta > 0 ? "+" : "−"}${formatMoney(Math.abs(moneyDelta))} ${tc("currency")}`}
                   dir={moneyDelta > 0 ? "up" : "down"}
                 />
               )}
               {statRows.map(({ key, delta, meta }) => (
                 <SummaryRow
                   key={key}
-                  label={meta.label}
+                  label={ts(key)}
                   color={meta.color}
                   tint={meta.tint}
                   icon={meta.icon}
@@ -215,7 +207,7 @@ export function InterseasonView({
                   </span>
                   <span className="flex-1 text-[13.5px] font-bold text-tg-brown">{label}</span>
                   <span className="rounded-full bg-tg-amber-tint px-[9px] py-1 text-[11px] font-extrabold text-tg-amber-deep">
-                    новый флаг
+                    {t("newFlag")}
                   </span>
                 </div>
               ))}
@@ -227,24 +219,24 @@ export function InterseasonView({
         {debt && (
           <div className="rounded-[18px] border border-[#E7BDB0] bg-[linear-gradient(180deg,#F6E0D6,#F1D2C5)] p-4">
             <div className="mb-2.5 flex items-center gap-[7px] font-display text-[13px] font-bold text-[#B5503C]">
-              <TrendingUp size={16} strokeWidth={2.4} /> Пока ты жил — долг рос
+              <TrendingUp size={16} strokeWidth={2.4} /> {t("debtGrew")}
             </div>
             <div className="flex items-center gap-3">
               <div className="flex flex-col gap-0.5">
                 <span className="font-display text-[17px] font-bold text-tg-brown-2">
-                  {formatMoney(debt.before)} с
+                  {formatMoney(debt.before)} {tc("currency")}
                 </span>
                 <span className="text-[10.5px] font-bold text-tg-muted">
-                  было · {Math.round(debt.rate * 100)}% годовых
+                  {t("debtBefore", { rate: Math.round(debt.rate * 100) })}
                 </span>
               </div>
               <ArrowRight size={20} strokeWidth={2.4} className="shrink-0 text-[#B5503C]" />
               <div className="ml-auto flex flex-col gap-0.5 text-right">
                 <span className="font-display text-[23px] font-bold text-[#B5503C]">
-                  {formatMoney(debt.after)} с
+                  {formatMoney(debt.after)} {tc("currency")}
                 </span>
                 <span className="text-[10.5px] font-bold text-tg-muted">
-                  через {close.timeSkip.years} {close.timeSkip.years === 1 ? "год" : close.timeSkip.years < 5 ? "года" : "лет"}
+                  {t("debtAfter", { years: t("years", { count: close.timeSkip.years }) })}
                 </span>
               </div>
             </div>
@@ -255,7 +247,7 @@ export function InterseasonView({
                     key={i}
                     className="flex-1 rounded-t-[4px] bg-[linear-gradient(180deg,#C96F4A,#B5503C)]"
                     style={{ height: `${10 + (v / debt.after) * 30}px`, opacity: 0.55 + (i / debt.perYear.length) * 0.45 }}
-                    title={`${formatMoney(v)} с`}
+                    title={`${formatMoney(v)} ${tc("currency")}`}
                   />
                 ))}
               </div>
@@ -270,8 +262,11 @@ export function InterseasonView({
               <PiggyBank size={18} strokeWidth={2.2} />
             </span>
             <p className="m-0 text-[13px] leading-snug font-bold text-tg-sage-deep">
-              А накопления тихо работали: {formatMoney(savings.before)} с →{" "}
-              {formatMoney(savings.after)} с под {Math.round(savings.rate * 100)}%.
+              {t("savingsGrew", {
+                before: `${formatMoney(savings.before)} ${tc("currency")}`,
+                after: `${formatMoney(savings.after)} ${tc("currency")}`,
+                rate: Math.round(savings.rate * 100),
+              })}
             </p>
           </div>
         )}
@@ -281,7 +276,7 @@ export function InterseasonView({
           <div className="flex items-center gap-3 rounded-2xl border border-tg-line-soft bg-tg-card px-[15px] py-[13px]">
             <div className="min-w-0 flex-1">
               <div className="font-display text-[10px] font-bold tracking-[0.7px] text-tg-amber-deep uppercase">
-                Дальше · сезон {nextSeason.number}
+                {t("nextSeason", { number: nextSeason.number })}
               </div>
               <div className="mt-0.5 text-[13.5px] font-bold text-tg-brown">{season.teaser}</div>
             </div>
@@ -296,11 +291,7 @@ export function InterseasonView({
           disabled={continuing}
           className="mt-auto lg:col-span-2 lg:mx-auto lg:mt-2 lg:max-w-[400px]"
         >
-          {continuing
-            ? "Минутку…"
-            : isFinal
-              ? "Узнать свою судьбу"
-              : "Прожить дальше"}
+          {continuing ? t("continuing") : isFinal ? t("toFinale") : t("continue")}
           <ArrowRight size={18} strokeWidth={2.6} />
         </CtaButton>
       </div>

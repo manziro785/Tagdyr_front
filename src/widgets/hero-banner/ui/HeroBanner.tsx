@@ -6,37 +6,39 @@ import {
   User,
   type LucideIcon,
 } from "lucide-react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 
+import { SessionAwareLink } from "@/features/auth/ui/SessionAwareLink";
 import { cn } from "@/lib/utils";
 import { HeroSlideshow } from "./HeroSlideshow";
 import { PhoneScreen } from "./PhoneScreen";
+import { LocaleSwitcher } from "@/features/locale/ui/LocaleSwitcher";
 
 const NAV_LINKS = [
-  { label: "Как играть", href: "#how" },
-  { label: "Истории", href: "#stories" },
+  { key: "navHow", href: "#how" },
+  { key: "navStories", href: "#stories" },
 ];
 
 const FEATURES: {
   icon: LucideIcon;
   color: string;
-  label: string;
+  key: string;
   filled?: boolean;
 }[] = [
   {
     icon: Coins,
     color: "var(--color-tg-amber-deep)",
-    label: "Финграмотность в механике",
+    key: "finance",
   },
   {
     icon: User,
     color: "var(--color-tg-sage-deep)",
-    label: "До 3 параллельных жизней",
+    key: "lives",
   },
   {
     icon: Heart,
     color: "var(--color-tg-terra-deep)",
-    label: "4 стата, без перегруза",
+    key: "stats",
     filled: true,
   },
 ];
@@ -86,30 +88,35 @@ function FloatCard({
 }
 
 export default function HeroDesktop() {
+  const t = useTranslations("landing");
+  const tc = useTranslations("common");
   return (
     <section className="relative isolate hidden min-h-dvh w-full flex-col overflow-hidden font-sans text-tg-brown lg:flex">
       <HeroSlideshow />
 
       <nav className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-8 py-5">
         <span className="font-display text-[26px] font-bold tracking-[-0.5px] text-tg-brown">
-          Тагдыр
+          {tc("appName")}
         </span>
         <div className="flex items-center gap-2.5">
+          <LocaleSwitcher />
           {NAV_LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}
               className="rounded-xl px-4 py-2.5 text-sm font-bold text-tg-brown-2 transition-colors hover:bg-white/40"
             >
-              {l.label}
+              {t(l.key)}
             </a>
           ))}
-          <Link
-            href="/auth/login"
+          <SessionAwareLink
+            guestHref="/auth/login"
+            userHref="/lives"
+            userLabel={tc("myLives")}
             className="rounded-xl border border-white/80 bg-white/60 px-5 py-2.5 font-display text-[15px] font-bold text-tg-brown shadow-[0_4px_12px_rgba(120,80,40,0.08)] transition-colors hover:bg-white/80"
           >
-            Войти
-          </Link>
+            {t("signIn")}
+          </SessionAwareLink>
         </div>
       </nav>
 
@@ -117,41 +124,47 @@ export default function HeroDesktop() {
         <div className="flex max-w-xl flex-col gap-[22px]">
           <span className="inline-flex items-center gap-2 self-start rounded-full border border-white/70 bg-white/55 px-3.5 py-[7px] font-display text-[12px] font-bold tracking-[1px] text-tg-terra-deep uppercase">
             <Sparkles size={12} fill="currentColor" strokeWidth={0} />
-            Игра-симулятор жизни про Кыргызстан
+            {t("badge")}
           </span>
 
           <h1 className="m-0 font-display text-[58px] leading-[1.04] font-bold tracking-[-1.4px] text-balance text-tg-brown [text-shadow:0_2px_20px_rgba(250,240,224,0.5)]">
-            Маленькие выборы
+            {t("headline1")}
             <br />
-            складываются в{" "}
-            <em className="text-tg-terra-deep not-italic">судьбу</em>
+            {t("headline2")}{" "}
+            <em className="text-tg-terra-deep not-italic">{t("headlineAccent")}</em>
           </h1>
 
           <p className="m-0 max-w-[460px] text-[19px] leading-[1.55] font-medium text-pretty text-tg-brown-2">
-            От выпускника до взрослого — карточка за карточкой. Той у родни,
-            первая зарплата, долг под проценты. Кудай буюрса, доживёшь до своей
-            истории.
+            {t("lead")}
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href="/auth/register"
+            <SessionAwareLink
+              guestHref="/auth/register"
+              userHref="/lives"
+              userLabel={
+                <>
+                  <ArrowRight size={18} strokeWidth={2.6} /> {t("continueLife")}
+                </>
+              }
               className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-[linear-gradient(180deg,#EFBE63,#E2A03A)] px-6 py-[15px] font-display text-base font-bold text-[#5A3F1C] shadow-[0_10px_24px_rgba(214,160,60,0.36)] transition-transform hover:-translate-y-px"
             >
-              <ArrowRight size={18} strokeWidth={2.6} /> Начать жизнь
-            </Link>
-            <Link
-              href="/auth/login"
+              <ArrowRight size={18} strokeWidth={2.6} /> {t("startLife")}
+            </SessionAwareLink>
+            <SessionAwareLink
+              guestHref="/auth/login"
+              userHref="/lives"
+              userLabel={tc("myLives")}
               className="inline-flex items-center justify-center gap-2.5 rounded-2xl border border-white/80 bg-white/60 px-6 py-[15px] font-display text-base font-bold text-tg-brown shadow-[0_4px_12px_rgba(120,80,40,0.08)] transition-colors hover:bg-white/80"
             >
-              Войти в сохранение
-            </Link>
+              {t("signInSaved")}
+            </SessionAwareLink>
           </div>
 
           <ul className="mt-1 flex flex-wrap gap-x-[22px] gap-y-2.5">
-            {FEATURES.map(({ icon: Icon, color, label, filled }) => (
+            {FEATURES.map(({ icon: Icon, color, key, filled }) => (
               <li
-                key={label}
+                key={key}
                 className="flex items-center gap-2.5 text-[13.5px] font-bold text-tg-brown-2"
               >
                 <span className="flex size-[30px] shrink-0 items-center justify-center rounded-[10px] bg-white/60">
@@ -162,7 +175,7 @@ export default function HeroDesktop() {
                     style={{ color }}
                   />
                 </span>
-                {label}
+                {t(`features.${key}`)}
               </li>
             ))}
           </ul>
@@ -174,16 +187,16 @@ export default function HeroDesktop() {
               icon={Coins}
               color="var(--color-tg-amber-deep)"
               tint="var(--color-tg-amber-tint)"
-              title="+5 000 с"
-              sub="первая зарплата"
+              title={t("floatSalaryTitle")}
+              sub={t("floatSalarySub")}
               className="top-[88px] left-[-44px] z-10"
             />
             <FloatCard
               icon={Heart}
               color="var(--color-tg-rose-deep)"
               tint="var(--color-tg-rose-tint)"
-              title="Отношения ↑"
-              sub="не пожадничал на той"
+              title={t("floatRelTitle")}
+              sub={t("floatRelSub")}
               filled
               className="right-[-48px] bottom-[120px] z-10"
             />

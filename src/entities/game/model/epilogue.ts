@@ -34,8 +34,8 @@ export function composeEpilogue(
   stats: Stats,
 ): string {
   const opener = OPENERS[season.number] ?? "Ещё один этап позади.";
-  // 2–3 самые характерные записи, чтобы эпилог читался, а не листался
-  const middle = diary.slice(-3).join(" ");
+  // только две последние записи: три превращали эпилог в простыню на пол-экрана
+  const middle = diary.slice(-2).join(" ");
   return [opener, middle, moodCloser(stats)].filter(Boolean).join(" ");
 }
 
