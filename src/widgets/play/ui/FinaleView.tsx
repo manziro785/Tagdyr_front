@@ -10,19 +10,22 @@ import { GameAvatar } from "@/entities/game/ui/GameAvatar";
 import { SceneBackground } from "@/entities/game/ui/SceneBackground";
 import { ShareLifeButton } from "@/features/share/ui/ShareLifeButton";
 import { Link, useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import type { Locale } from "@/i18n/routing";
+import { useLocale, useTranslations } from "next-intl";
 
 /** Финал жизни: архетип концовки, индекс, «письмо себе в 17», разблокировки. */
 export function FinaleView({ run }: { run: RunState }) {
   const t = useTranslations("finale");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const finale = run.finale;
   if (!finale) return null;
 
-  const character = getCharacter(run.characterId);
-  const letter = composeLetter(run.flags, run.stats, finale.ending.title);
+  const character = getCharacter(run.characterId, locale);
+  // ending приходит от API уже на языке страницы (Accept-Language / гостевой API)
+  const letter = composeLetter(run.flags, run.stats, finale.ending.title, locale);
   const unlockedNames = finale.unlockedCharacterIds
-    .map((id) => getCharacter(id)?.name)
+    .map((id) => getCharacter(id, locale)?.name)
     .filter(Boolean);
 
   return (

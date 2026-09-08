@@ -2,6 +2,10 @@
  * Доменные типы игры. Зеркалируют zod-схемы бэкенда (@tagdyr/schemas) —
  * пакеты не публикуются, поэтому типы продублированы вручную и помечены
  * как контракт: менять только синхронно с бэкендом.
+ *
+ * Типы контента параметризованы типом текста `T`: в файлах контента лежит
+ * `Localized` (все языки сразу), а в UI приезжает уже выбранная `string`.
+ * Дефолт `T = string` — поэтому компоненты пишут просто `GameEvent`.
  */
 
 // ── базовое состояние жизни ──────────────────────────────────────────────────
@@ -56,7 +60,7 @@ export interface Condition {
 }
 
 /** Эффекты выбора. Все поля опциональны и применяются вместе. */
-export interface Effects {
+export interface Effects<T = string> {
   /** Дельты статов (money — в сомах, остальное — пункты 0..100). */
   stats?: Partial<Stats>;
   /** Выставить флаги. */
@@ -68,32 +72,32 @@ export interface Effects {
   /** Код карточки знаний, которая открывается. */
   card?: string;
   /** Строка в дневник сезона (от первого лица, прошедшее время). */
-  diary?: string;
+  diary?: T;
 }
 
-export interface EventChoice {
+export interface EventChoice<T = string> {
   /** Стабильный код выбора — уходит в keyDecisions / choiceLog. */
   id: string;
-  text: string;
+  text: T;
   /** Выделить как «главный» вариант (янтарная кнопка). */
   primary?: boolean;
   /** Шанс успеха в процентах; провал применяет failEffects. */
   chance?: number;
-  effects: Effects;
-  failEffects?: Effects;
+  effects: Effects<T>;
+  failEffects?: Effects<T>;
   /** Текст при провале риска (показывается в тосте результата). */
-  failText?: string;
+  failText?: T;
   /** Выбор доступен только при условии (иначе серый с замком). */
   requires?: Condition;
 }
 
-export interface GameEvent {
+export interface GameEvent<T = string> {
   code: string;
   season: number;
   /** Подпись места/темы: «Двор · той у родни». */
-  kicker: string;
-  text: string;
-  choices: EventChoice[];
+  kicker: T;
+  text: T;
+  choices: EventChoice<T>[];
   /** Условие попадания в пул. */
   requires?: Condition;
   /** Вес при случайном выборе из пула (default 1). */
@@ -106,18 +110,18 @@ export interface GameEvent {
 
 // ── контент: персонажи, карточки, концовки ──────────────────────────────────
 
-export interface Character {
+export interface Character<T = string> {
   id: string;
   code: string;
-  name: string;
+  name: T;
   age: number;
-  description: string;
+  description: T;
   startStats: Stats;
   unlockCondition: string | null;
   isUnlockable: boolean;
   /** Клиентская витрина (нет на сервере): откуда родом и черта характера. */
-  place: string;
-  trait: string;
+  place: T;
+  trait: T;
   accent: "amber" | "sage" | "terracotta" | "rose";
 }
 
@@ -128,21 +132,21 @@ export type KnowledgeCardCategory =
   | "career"
   | "life";
 
-export interface KnowledgeCard {
+export interface KnowledgeCard<T = string> {
   id: string;
   code: string;
-  title: string;
+  title: T;
   category: KnowledgeCardCategory;
-  body: string;
+  body: T;
   season: number;
 }
 
-export interface Ending {
+export interface Ending<T = string> {
   id: string;
   code: string;
-  title: string;
-  archetype: string;
-  description: string;
+  title: T;
+  archetype: T;
+  description: T;
   bonus: number;
 }
 
@@ -158,20 +162,20 @@ export type SceneName =
   | "jailoo"
   | "city-evening";
 
-export interface SeasonMeta {
+export interface SeasonMeta<T = string> {
   number: number;
   /** «Выпускник», «Студенчество»… */
-  title: string;
+  title: T;
   /** Возраст на старте сезона. */
   ageAtStart: number;
   /** Локация для шапки: «Село в Нарыне». */
-  place: string;
+  place: T;
   /** Ключ фоновой сцены. */
   scene: SceneName;
   /** Сколько ходов в сезоне. */
   turns: number;
-  /** Тизер следующего этапа (показывается в межсезонье предыдущего). */
-  teaser: string;
+  /** Тизер следующего этапа (показывается в межсезонье предыдущего); пусто у финального. */
+  teaser: T | null;
 }
 
 // ── результат хода ───────────────────────────────────────────────────────────

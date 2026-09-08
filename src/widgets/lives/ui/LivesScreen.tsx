@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight, Coins, LogOut, Plus, Lock, Trash2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
 import {
@@ -23,6 +23,7 @@ import { useAuthStore } from "@/entities/session/model/auth-store";
 import { BottomNav } from "@/widgets/game-nav/BottomNav";
 import { cn } from "@/lib/utils";
 import { useRouter } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
 
 const MAX_SLOTS = 3;
 
@@ -63,6 +64,7 @@ function SlotBars({ life }: { life: LifeSummary }) {
 export function LivesScreen() {
   const t = useTranslations("lives");
   const tc = useTranslations("common");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const signOut = useAuthStore((s) => s.signOut);
   const { data: lives, isLoading } = useLives();
@@ -151,7 +153,7 @@ export function LivesScreen() {
             </div>
           )}
           {activeLives.map((life) => {
-            const ch = getCharacter(life.characterId);
+            const ch = getCharacter(life.characterId, locale);
             const finished = life.status === "finished";
             const run = runs[life.id];
             return (
@@ -178,7 +180,7 @@ export function LivesScreen() {
                     <span className="text-xs font-semibold text-tg-muted">
                       {finished
                         ? t("finished")
-                        : `${getSeason(life.currentSeason).title} · ${ageStage(life.age)}${run && run.phase !== "turn" ? ` · ${t("interseason")}` : ""}`}
+                        : `${getSeason(life.currentSeason, locale).title} · ${ageStage(life.age, locale)}${run && run.phase !== "turn" ? ` · ${t("interseason")}` : ""}`}
                     </span>
                     <SlotBars life={life} />
                   </span>
@@ -239,7 +241,7 @@ export function LivesScreen() {
         <div className="flex gap-2.5 lg:gap-4">
           {(roster?.items ?? []).map((ch) => {
             // сервер отдаёт только игровые поля; витрина — из локального контента
-            const display = getCharacter(ch.id);
+            const display = getCharacter(ch.id, locale);
             const locked = !ch.unlocked;
             const selected = selectedChar === ch.id;
             const accent = ACCENT[display?.accent ?? "amber"];
@@ -282,7 +284,7 @@ export function LivesScreen() {
                 <span className="flex w-full flex-col items-center gap-1">
                   <span className="inline-flex items-center gap-[3px] rounded-full bg-tg-amber-tint px-2 py-[3px] text-[10.5px] font-extrabold whitespace-nowrap text-tg-amber-deep">
                     <Coins size={12} strokeWidth={2.2} />{" "}
-                    {formatMoney(ch.startStats.money)} с
+                    {formatMoney(ch.startStats.money)} {tc("currency")}
                   </span>
                   {locked ? (
                     <span className="inline-flex items-center gap-[3px] rounded-full bg-tg-line-soft px-2 py-[3px] text-[10.5px] font-extrabold text-tg-muted">

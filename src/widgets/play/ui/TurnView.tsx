@@ -11,18 +11,20 @@ import {
   Target,
   X,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { ageStage, getSeason, sceneForRun } from "@/entities/game/content/seasons";
 import { getCharacter } from "@/entities/game/content/characters";
 import { getSeasonGoal } from "@/entities/game/content/goals";
 import { choiceAvailable } from "@/entities/game/model/engine";
+import { localizeEvent } from "@/entities/game/model/localized";
 import {
   runCurrentEvent,
   useRunsStore,
   type RunState,
 } from "@/entities/game/model/run-store";
 import type { GameEvent, Stats, TurnOutcome } from "@/entities/game/model/types";
+import type { Locale } from "@/i18n/routing";
 import { ChoiceCard } from "@/entities/game/ui/ChoiceCard";
 import { CtaButton } from "@/entities/game/ui/CtaButton";
 import { GameAvatar } from "@/entities/game/ui/GameAvatar";
@@ -119,14 +121,17 @@ function EventCard({ event }: { event: GameEvent }) {
 export function TurnView({ run }: { run: RunState }) {
   const t = useTranslations("play");
   const tc = useTranslations("common");
+  const locale = useLocale() as Locale;
   const choose = useRunsStore((s) => s.choose);
   const resolveSpecial = useRunsStore((s) => s.resolveSpecial);
   const dismissOutcome = useRunsStore((s) => s.dismissOutcome);
 
-  const season = getSeason(run.season);
-  const character = getCharacter(run.characterId);
-  const goal = getSeasonGoal(run.season);
-  const event = runCurrentEvent(run);
+  const season = getSeason(run.season, locale);
+  const character = getCharacter(run.characterId, locale);
+  const goal = getSeasonGoal(run.season, locale);
+  const raw = runCurrentEvent(run);
+  // событие из пула хранит все языки — на экран уходит уже выбранный
+  const event = raw && localizeEvent(raw, locale);
   const engineState = {
     characterId: run.characterId,
     stats: run.stats,
@@ -144,7 +149,7 @@ export function TurnView({ run }: { run: RunState }) {
           {character?.name}, {run.age}
         </div>
         <div className="mt-0.5 flex items-center gap-1 text-xs font-bold text-tg-muted">
-          <MapPin size={12} strokeWidth={2.2} /> {season.place} · {ageStage(run.age)}
+          <MapPin size={12} strokeWidth={2.2} /> {season.place} · {ageStage(run.age, locale)}
         </div>
       </div>
       <Link
@@ -160,7 +165,7 @@ export function TurnView({ run }: { run: RunState }) {
   const eventBlock = event ? (
     event.special === "budget" ? (
       <BudgetGame
-        onDone={(choiceId, effects) => resolveSpecial(run.lifeId, choiceId, effects)}
+        onDone={(choiceId, effects) => resolveSpecial(run.lifeId, choiceId, effects, locale)}
       />
     ) : (
       <>
@@ -171,7 +176,7 @@ export function TurnView({ run }: { run: RunState }) {
               key={c.id}
               choice={c}
               disabled={!choiceAvailable(c, engineState)}
-              onSelect={() => choose(run.lifeId, c.id)}
+              onSelect={() => choose(run.lifeId, c.id, locale)}
             />
           ))}
         </div>
@@ -218,7 +223,7 @@ export function TurnView({ run }: { run: RunState }) {
               {character?.name}, {run.age}
             </div>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/50 px-3 py-[5px] text-[13px] font-bold text-tg-brown-2">
-              <MapPin size={13} strokeWidth={2.2} /> {season.place} · {ageStage(run.age)}
+              <MapPin size={13} strokeWidth={2.2} /> {season.place} · {ageStage(run.age, locale)}
             </span>
           </div>
           {goal && (

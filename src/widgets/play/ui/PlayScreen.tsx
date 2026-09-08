@@ -1,11 +1,12 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
 import { useCompleteSeason, useFinishLife, useLife } from "@/entities/game/api";
-import { getSeason } from "@/entities/game/content/seasons";
 import { composeEpilogue } from "@/entities/game/model/epilogue";
+import { useRouter } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
 import {
   seasonSeed,
   useRunsStore,
@@ -44,6 +45,8 @@ function CenteredNote({ children }: { children: React.ReactNode }) {
  */
 export function PlayScreen({ lifeId }: { lifeId: string }) {
   const t = useTranslations("play");
+  const locale = useLocale() as Locale;
+  const router = useRouter();
   const { data: life, isLoading, isError, refetch } = useLife(lifeId);
   const run = useRunsStore((s) => s.runs[lifeId]);
   const startRun = useRunsStore((s) => s.startRun);
@@ -119,7 +122,7 @@ export function PlayScreen({ lifeId }: { lifeId: string }) {
       {
         onSuccess: (res) => {
           const close: SeasonClose = {
-            epilogue: composeEpilogue(getSeason(run.season), run.diary, run.stats),
+            epilogue: composeEpilogue(run.season, run.diary, run.stats, locale),
             timeSkip: res.timeSkip,
             next: res.nextSeasonStartState,
             lifeIndex: res.seasonResult.lifeIndex,
@@ -130,7 +133,7 @@ export function PlayScreen({ lifeId }: { lifeId: string }) {
         },
       },
     );
-  }, [run, lifeId, completeSeason, closeSeason]);
+  }, [run, lifeId, completeSeason, closeSeason, locale]);
 
   const onContinue = () => {
     if (!run?.seasonClose) return;
@@ -157,7 +160,7 @@ export function PlayScreen({ lifeId }: { lifeId: string }) {
         <p className="text-sm font-semibold text-tg-muted">
           {t("notFoundHint")}
         </p>
-        <CtaButton onClick={() => (window.location.href = "/lives")} className="max-w-60">
+        <CtaButton onClick={() => router.push("/lives")} className="max-w-60">
           {t("toLives")}
         </CtaButton>
       </CenteredNote>

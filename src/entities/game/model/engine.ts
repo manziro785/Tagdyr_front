@@ -1,6 +1,9 @@
+import type { Locale } from "@/i18n/routing";
+
 import { eventsOfSeason } from "../content/events";
 import { getCard } from "../content/cards";
-import { getSeason } from "../content/seasons";
+import { seasonTurns } from "../content/seasons";
+import { localizeEffects, tx, type Localized } from "./localized";
 import { createRng } from "./rng";
 import type {
   Condition,
@@ -55,9 +58,9 @@ export function currentEvent(
   turn: number,
   usedEvents: readonly string[],
   state: EngineState,
-): GameEvent | null {
+): GameEvent<Localized> | null {
   // сезон заканчивается по числу ходов из меты или по исчерпанию пула
-  if (turn >= getSeason(season).turns) return null;
+  if (turn >= seasonTurns(season)) return null;
   const pool = eventsOfSeason(season).filter(
     (e) => !usedEvents.includes(e.code) && conditionMet(e.requires, state),
   );
@@ -73,8 +76,8 @@ export function currentEvent(
   return pool[pool.length - 1] ?? null;
 }
 
-/** Доступен ли вариант выбора (кнопка активна). */
-export function choiceAvailable(choice: EventChoice, state: EngineState): boolean {
+/** Доступен ли вариант выбора (кнопка активна). Язык текста тут не важен. */
+export function choiceAvailable<T>(choice: EventChoice<T>, state: EngineState): boolean {
   return conditionMet(choice.requires, state);
 }
 
@@ -91,34 +94,43 @@ export interface ApplyResult {
 /**
  * Применить выбор. Бросок шанса детерминирован от seed+season+turn+choiceId:
  * сохранение/перезагрузка не даёт «перекинуть кубик».
+ *
+ * locale нужен только текстам (дневник, карточка, текст провала) — на бросок
+ * и на цифры он не влияет, поэтому реплей на сервере остаётся сходимым.
  */
 export function applyChoice(
   seed: string,
   season: number,
   turn: number,
-  event: GameEvent,
-  choice: EventChoice,
+  event: GameEvent<Localized>,
+  choice: EventChoice<Localized>,
   state: EngineState,
+  locale: Locale,
 ): ApplyResult {
   let success = true;
   if (choice.chance !== undefined) {
     const rng = createRng(`${seed}:s${season}:t${turn}:${choice.id}`);
     success = rng.chance(choice.chance / 100);
   }
-  const effects = success ? choice.effects : (choice.failEffects ?? choice.effects);
-  return applyEffects(event, choice.id, effects, state, season, {
+  const raw = success ? choice.effects : (choice.failEffects ?? choice.effects);
+  return applyEffects(event.code, choice.id, localizeEffects(raw, locale), state, season, locale, {
     success,
-    failText: success ? undefined : choice.failText,
+    failText: success || !choice.failText ? undefined : tx(choice.failText, locale),
   });
 }
 
-/** Общая механика применения эффектов (обычный выбор и мини-игра). */
+/**
+ * Общая механика применения эффектов (обычный выбор и мини-игра).
+ * Тексты приходят уже переведёнными — движок про языки ничего не знает,
+ * кроме кода карточки знаний, которую надо достать на нужном языке.
+ */
 export function applyEffects(
-  event: GameEvent,
+  eventCode: string,
   choiceId: string,
   effects: Effects,
   state: EngineState,
   season: number,
+  locale: Locale,
   meta: { success: boolean; failText?: string } = { success: true },
 ): ApplyResult {
   const statDeltas: Partial<Stats> = {};
@@ -167,7 +179,7 @@ export function applyEffects(
     }
   }
 
-  const unlockedCard = effects.card ? getCard(effects.card) : undefined;
+  const unlockedCard = effects.card ? getCard(effects.card, locale) : undefined;
 
   return {
     stats,
@@ -175,7 +187,7 @@ export function applyEffects(
     debts,
     diaryLine: effects.diary ?? null,
     outcome: {
-      eventCode: event.code,
+      eventCode,
       choiceId,
       success: meta.success,
       failText: meta.failText,

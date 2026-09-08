@@ -151,7 +151,9 @@
     "pickNone": "Nothing picked yet.",
     "loading": "Comparing fates…",
     "lifeIndex": "life index {value}",
-    "diffs": "Where the roads split"
+    "diffs": "Where the roads split",
+    "markA": "A",
+    "markB": "B"
   },
   "choice": {
     "notEnough": "not enough",

@@ -3,7 +3,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import type { Locale } from "@/i18n/routing";
+
 import { applyChoice, applyEffects, currentEvent } from "./engine";
+import type { Localized } from "./localized";
 import type { TimeSkip } from "./finance";
 import type {
   ChoiceLogEntry,
@@ -83,7 +86,7 @@ export function seasonSeed(run: Pick<RunState, "baseSeed" | "season">): string {
 }
 
 /** Событие текущего хода (чистая производная от состояния рана). */
-export function runCurrentEvent(run: RunState): GameEvent | null {
+export function runCurrentEvent(run: RunState): GameEvent<Localized> | null {
   return currentEvent(seasonSeed(run), run.season, run.turn, run.usedEvents, {
     characterId: run.characterId,
     stats: run.stats,
@@ -106,13 +109,18 @@ export interface StartRunInput {
 interface RunsStore {
   runs: Record<string, RunState>;
   startRun: (input: StartRunInput) => void;
-  /** Применить выбор текущего события. Возвращает исход хода. */
-  choose: (lifeId: string, choiceId: string) => TurnOutcome | null;
-  /** Применить произвольные эффекты (мини-игра «Бюджет»). */
+  /**
+   * Применить выбор текущего события. Возвращает исход хода.
+   * locale нужен, потому что строка дневника пишется в ран сразу переведённой:
+   * стор живёт вне React, useTranslations здесь недоступен.
+   */
+  choose: (lifeId: string, choiceId: string, locale: Locale) => TurnOutcome | null;
+  /** Применить произвольные эффекты (мини-игра «Бюджет»; тексты уже переведены). */
   resolveSpecial: (
     lifeId: string,
     choiceId: string,
     effects: Effects,
+    locale: Locale,
   ) => TurnOutcome | null;
   /** Закрыть оверлей результата; двигает фазу, если сезон кончился. */
   dismissOutcome: (lifeId: string) => void;
@@ -125,7 +133,12 @@ interface RunsStore {
   dropRun: (lifeId: string) => void;
 }
 
-function advance(run: RunState, applied: ReturnType<typeof applyEffects>, event: GameEvent, choiceId: string): RunState {
+function advance(
+  run: RunState,
+  applied: ReturnType<typeof applyEffects>,
+  event: GameEvent<Localized>,
+  choiceId: string,
+): RunState {
   const next: RunState = {
     ...run,
     stats: applied.stats,
@@ -180,7 +193,7 @@ export const useRunsStore = create<RunsStore>()(
           },
         })),
 
-      choose: (lifeId, choiceId) => {
+      choose: (lifeId, choiceId, locale) => {
         const run = get().runs[lifeId];
         if (!run || run.phase !== "turn") return null;
         const event = runCurrentEvent(run);
@@ -195,23 +208,24 @@ export const useRunsStore = create<RunsStore>()(
           event,
           choice,
           { characterId: run.characterId, stats: run.stats, flags: run.flags, debts: run.debts },
+          locale,
         );
         set((s) => ({ runs: { ...s.runs, [lifeId]: advance(run, applied, event, choiceId) } }));
         return applied.outcome;
       },
 
-      resolveSpecial: (lifeId, choiceId, effects) => {
+      resolveSpecial: (lifeId, choiceId, effects, locale) => {
         const run = get().runs[lifeId];
         if (!run || run.phase !== "turn") return null;
         const event = runCurrentEvent(run);
         if (!event) return null;
 
-        const applied = applyEffects(event, choiceId, effects, {
+        const applied = applyEffects(event.code, choiceId, effects, {
           characterId: run.characterId,
           stats: run.stats,
           flags: run.flags,
           debts: run.debts,
-        }, run.season);
+        }, run.season, locale);
         set((s) => ({ runs: { ...s.runs, [lifeId]: advance(run, applied, event, choiceId) } }));
         return applied.outcome;
       },

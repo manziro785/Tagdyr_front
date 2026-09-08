@@ -10,6 +10,7 @@ import { GameAvatar } from "@/entities/game/ui/GameAvatar";
 import { SceneBackground } from "@/entities/game/ui/SceneBackground";
 import { StatsRow } from "@/entities/game/ui/stats";
 import type { SharePayload } from "@/entities/meta/api/types";
+import type { Locale } from "@/i18n/routing";
 import { API_BASE_URL } from "@/shared/ui/api/base-url";
 
 /**
@@ -19,11 +20,19 @@ import { API_BASE_URL } from "@/shared/ui/api/base-url";
  * флагов и почты владельца.
  */
 
-async function fetchShared(token: string): Promise<SharePayload | null> {
-  const res = await fetch(`${API_BASE_URL}/share/${encodeURIComponent(token)}`, {
-    // ссылку открывают пачкой из чата — минута кэша бережёт бесплатный Render
-    next: { revalidate: 60 },
-  });
+/**
+ * Язык уходит query-параметром, а не заголовком: fetch-кэш Next ключуется по
+ * URL, и с общим адресом английская страница могла бы отдать русский заголовок
+ * концовки из чужого кэша.
+ */
+async function fetchShared(token: string, locale: string): Promise<SharePayload | null> {
+  const res = await fetch(
+    `${API_BASE_URL}/share/${encodeURIComponent(token)}?locale=${locale}`,
+    {
+      // ссылку открывают пачкой из чата — минута кэша бережёт бесплатный Render
+      next: { revalidate: 60 },
+    },
+  );
   if (!res.ok) return null;
   return (await res.json()) as SharePayload;
 }
@@ -35,11 +44,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { token, locale } = await params;
   const t = await getTranslations({ locale, namespace: "sharePage" });
-  const payload = await fetchShared(token);
+  const payload = await fetchShared(token, locale);
   if (!payload) return { title: t("notFoundTitle") };
 
   const headline = t("headline", {
-    name: getCharacter(payload.characterId)?.name ?? t("player"),
+    name: getCharacter(payload.characterId, locale as Locale)?.name ?? t("player"),
     age: payload.age,
     index: payload.lifeIndex.toFixed(1),
   });
@@ -69,10 +78,11 @@ export default async function SharedLifePage({
   const { token, locale } = await params;
   const t = await getTranslations({ locale, namespace: "sharePage" });
   const tc = await getTranslations({ locale, namespace: "common" });
-  const payload = await fetchShared(token);
+  const payload = await fetchShared(token, locale);
   if (!payload) notFound();
 
-  const character = getCharacter(payload.characterId);
+  // сегмент [locale] уже провалидирован layout-ом — здесь он гарантированно наш
+  const character = getCharacter(payload.characterId, locale as Locale);
   const finished = payload.status === "finished";
 
   return (
@@ -103,7 +113,7 @@ export default async function SharedLifePage({
               character: character?.name ?? t("hero"),
               age: payload.age,
             })}
-            {ageStage(payload.age)}
+            {ageStage(payload.age, locale as Locale)}
           </p>
         </div>
 

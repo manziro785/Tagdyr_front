@@ -1,3 +1,5 @@
+import type { Locale } from "@/i18n/routing";
+
 import type { TimeSkip } from "../model/finance";
 import type {
   Debt,
@@ -23,7 +25,8 @@ export interface Me {
   email: string | null;
   displayName: string;
   avatarUrl: string | null;
-  locale: "ru" | "ky";
+  /** Язык профиля; сервер проставляет его по языку страницы регистрации. */
+  locale: Locale;
 }
 
 export interface TokenPair {

@@ -2,15 +2,15 @@ import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
 import { routing } from "./routing";
-import ru from "../../messages/ru.json";
+import en from "../../messages/en.json";
 
-type Messages = typeof ru;
+type Messages = typeof en;
 type Dict = Record<string, unknown>;
 
 /**
- * Недостающие ключи добираем из русского словаря. Пока переводы не готовы,
- * кыргызская и английская версии показывают русский текст вместо пустых мест
- * или технических ключей — так можно катить перевод по частям.
+ * Недостающие ключи добираем из английского словаря (он дефолтный и полный).
+ * Если в переводе забыли ключ, игрок увидит английскую строку, а не «lives.title»
+ * — и это заметно на глаз, в отличие от пустого места.
  */
 function withFallback(base: Dict, override: Dict): Dict {
   const out: Dict = { ...base };
@@ -36,9 +36,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   const messages =
     locale === routing.defaultLocale
-      ? ru
+      ? en
       : (withFallback(
-          ru as Dict,
+          en as Dict,
           (await import(`../../messages/${locale}.json`)).default as Dict,
         ) as Messages);
 

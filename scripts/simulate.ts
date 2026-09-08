@@ -6,10 +6,14 @@
  * Запуск: node ../tagdyr-backend/node_modules/tsx/dist/cli.mjs scripts/simulate.ts
  */
 import { ALL_EVENTS } from "../src/entities/game/content/events";
-import { CHARACTERS } from "../src/entities/game/content/characters";
-import { ENDINGS, getEnding } from "../src/entities/game/content/endings";
+import { getCharacters } from "../src/entities/game/content/characters";
+import { getEnding, getEndings } from "../src/entities/game/content/endings";
 import { getCard } from "../src/entities/game/content/cards";
-import { SEASONS } from "../src/entities/game/content/seasons";
+import { getSeasons } from "../src/entities/game/content/seasons";
+import { routing } from "../src/i18n/routing";
+import enMessages from "../messages/en.json";
+import ruMessages from "../messages/ru.json";
+import kyMessages from "../messages/ky.json";
 import { applyChoice, choiceAvailable, currentEvent } from "../src/entities/game/model/engine";
 import {
   applyTimeSkip,
@@ -21,6 +25,12 @@ import {
 } from "../src/entities/game/model/finance";
 import { createRng } from "../src/entities/game/model/rng";
 import type { Debt, Flags, Stats } from "../src/entities/game/model/types";
+
+/** Симуляция гоняет механику — язык на неё не влияет, берём дефолтный. */
+const L = routing.defaultLocale;
+const CHARACTERS = getCharacters(L);
+const ENDINGS = getEndings(L);
+const SEASONS = getSeasons(L);
 
 let failures = 0;
 function check(cond: boolean, msg: string): void {
@@ -42,7 +52,7 @@ for (const e of ALL_EVENTS) {
     check(!choiceIds.has(c.id), `${e.code}: дубль выбора ${c.id}`);
     choiceIds.add(c.id);
     for (const eff of [c.effects, c.failEffects]) {
-      if (eff?.card) check(getCard(eff.card) !== undefined, `${e.code}/${c.id}: нет карточки ${eff.card}`);
+      if (eff?.card) check(getCard(eff.card, L) !== undefined, `${e.code}/${c.id}: нет карточки ${eff.card}`);
     }
     if (c.chance !== undefined) check(c.chance > 0 && c.chance < 100, `${e.code}/${c.id}: странный шанс ${c.chance}`);
   }
@@ -54,6 +64,50 @@ for (const s of SEASONS) {
   check(unconditional.length >= 4, `сезон ${s.number}: только ${unconditional.length} безусловных событий`);
 }
 console.log(`  событий: ${ALL_EVENTS.length}, сезонов: ${SEASONS.length}, концовок: ${ENDINGS.length}`);
+
+// ── 1b. Полнота переводов ─────────────────────────────────────────────────
+// Пропущенный язык в контенте — ошибка типов (Localized требует все ключи),
+// а вот пустую строку и забытый ключ в словаре ловим здесь.
+console.log("Переводы:");
+{
+  let emptyStrings = 0;
+  const walk = (value: unknown, path: string): void => {
+    if (typeof value === "string") {
+      if (value.trim() === "") {
+        emptyStrings += 1;
+        check(false, `пустой перевод: ${path}`);
+      }
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((v, i) => walk(v, `${path}[${i}]`));
+      return;
+    }
+    if (value && typeof value === "object") {
+      for (const [k, v] of Object.entries(value)) walk(v, `${path}.${k}`);
+    }
+  };
+  for (const e of ALL_EVENTS) walk(e, e.code);
+  console.log(`  контент: ${ALL_EVENTS.length} событий на ${routing.locales.length} языках, пустых строк: ${emptyStrings}`);
+
+  const flatKeys = (obj: object, prefix = ""): string[] =>
+    Object.entries(obj).flatMap(([k, v]) => {
+      const key = prefix ? `${prefix}.${k}` : k;
+      return v && typeof v === "object" && !Array.isArray(v) ? flatKeys(v, key) : [key];
+    });
+  const base = flatKeys(enMessages);
+  for (const [locale, dict] of [
+    ["ru", ruMessages],
+    ["ky", kyMessages],
+  ] as const) {
+    const keys = new Set(flatKeys(dict));
+    const missing = base.filter((k) => !keys.has(k));
+    const extra = [...keys].filter((k) => !base.includes(k));
+    check(missing.length === 0, `messages/${locale}.json: нет ключей — ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? ` (+${missing.length - 5})` : ""}`);
+    check(extra.length === 0, `messages/${locale}.json: лишние ключи — ${extra.slice(0, 5).join(", ")}`);
+    console.log(`  messages/${locale}.json: ${keys.size} из ${base.length} ключей`);
+  }
+}
 
 // ── 2. Симуляция полных жизней ────────────────────────────────────────────
 type Profile = "random" | "sensible";
@@ -109,7 +163,7 @@ function simulateLives(profile: Profile, count: number): Map<string, number> {
         const choice = pool[Math.floor(picker.next() * pool.length)]!;
         const res = applyChoice(seed, season, turn, event, choice, {
           characterId: character.id, stats, flags, debts,
-        });
+        }, L);
         stats = res.stats;
         flags = res.flags;
         debts = res.debts;
@@ -132,10 +186,10 @@ function simulateLives(profile: Profile, count: number): Map<string, number> {
     }
 
     const endingCode = resolveEnding(stats, flags, debts);
-    check(getEnding(endingCode) !== undefined, `концовка ${endingCode} без контента`);
+    check(getEnding(endingCode, L) !== undefined, `концовка ${endingCode} без контента`);
     endingCounts.set(endingCode, (endingCounts.get(endingCode) ?? 0) + 1);
 
-    const index = computeLifeIndex(stats, cardsSeen.size, getEnding(endingCode)?.bonus ?? 0);
+    const index = computeLifeIndex(stats, cardsSeen.size, getEnding(endingCode, L)?.bonus ?? 0);
     check(Number.isFinite(index) && index >= 0, `индекс ${index} невалиден`);
     // 17 + (1+1+3+5): после финального сезона годы не добавляются
     check(age === 27, `возраст финала ${age}, ожидался 27`);
@@ -179,7 +233,7 @@ console.log(`  карточек открыто симуляцией: ${cardsSeen
         )!;
         const res = applyChoice(`det-s${season}`, season, turn, ev, c, {
           characterId: CHARACTERS[0]!.id, stats, flags, debts,
-        });
+        }, L);
         stats = res.stats; flags = res.flags; debts = res.debts;
         used.push(ev.code); turn += 1;
       }

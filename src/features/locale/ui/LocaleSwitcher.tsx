@@ -14,7 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Переключатель языка: RU · KG · EN.
+ * Переключатель языка: EN · RU · KG.
  *
  * Меняет только сегмент локали, оставаясь на той же странице — usePathname из
  * i18n/navigation отдаёт путь БЕЗ префикса, поэтому router.replace с опцией
@@ -29,7 +29,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  // переводы контента ещё не готовы — переключатель скрыт, локали живут по URL
+  // рубильник на случай, если перевод снова окажется неполным
   if (!LOCALE_SWITCHER_VISIBLE) return null;
 
   const switchTo = (locale: Locale) => {

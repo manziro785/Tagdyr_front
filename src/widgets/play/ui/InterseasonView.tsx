@@ -22,7 +22,8 @@ import { getSeason, sceneForRun } from "@/entities/game/content/seasons";
 import { GameFrame } from "@/widgets/game-shell/GameFrame";
 import { MAX_SEASON } from "@/entities/game/model/finance";
 import type { RunState } from "@/entities/game/model/run-store";
-import { useTranslations } from "next-intl";
+import type { Locale } from "@/i18n/routing";
+import { useLocale, useTranslations } from "next-intl";
 
 import type { Stats } from "@/entities/game/model/types";
 import { CtaButton } from "@/entities/game/ui/CtaButton";
@@ -53,12 +54,13 @@ export function InterseasonView({
   const ts = useTranslations("stats");
   const tc = useTranslations("common");
   const tf = useTranslations("flags");
+  const locale = useLocale() as Locale;
   const close = run.seasonClose;
   if (!close) return null;
 
-  const season = getSeason(run.season);
+  const season = getSeason(run.season, locale);
   const isFinal = run.season >= MAX_SEASON || close.next === null;
-  const nextSeason = close.next ? getSeason(close.next.seasonNumber) : null;
+  const nextSeason = close.next ? getSeason(close.next.seasonNumber, locale) : null;
 
   const statRows = (
     Object.keys(STAT_META) as (keyof typeof STAT_META)[]
@@ -75,7 +77,7 @@ export function InterseasonView({
 
   const debt = close.timeSkip.debts.find((d) => d.after > d.before);
   const savings = close.timeSkip.savings;
-  const goal = getSeasonGoal(run.season);
+  const goal = getSeasonGoal(run.season, locale);
   const goalMet = goal ? goal.check(run.stats, run.debts) : null;
 
   return (

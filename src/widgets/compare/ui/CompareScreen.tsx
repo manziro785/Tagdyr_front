@@ -1,7 +1,7 @@
 "use client";
 
 import { GitCompareArrows, Sparkles } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { useCompare, useLives } from "@/entities/game/api";
@@ -12,17 +12,20 @@ import { ALL_EVENTS } from "@/entities/game/content/events";
 import { GameAvatar } from "@/entities/game/ui/GameAvatar";
 import { formatMoney, moneyPct } from "@/entities/game/ui/stats";
 import { BottomNav } from "@/widgets/game-nav/BottomNav";
+import { tx } from "@/entities/game/model/localized";
+import type { Locale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
-function decisionText(eventCode: string, choiceId: string): string | null {
+function decisionText(eventCode: string, choiceId: string, locale: Locale): string | null {
   const event = ALL_EVENTS.find((e) => e.code === eventCode);
   const choice = event?.choices.find((c) => c.id === choiceId);
-  return choice ? choice.text : null;
+  return choice ? tx(choice.text, locale) : null;
 }
 
 function keyDifferences(
   a: CompareLife,
   b: CompareLife,
+  locale: Locale,
 ): { question: string; a: string; b: string }[] {
   const decisionsOf = (life: CompareLife) =>
     new Map(
@@ -38,10 +41,10 @@ function keyDifferences(
     const choiceB = db.get(code);
     if (!choiceB || choiceA === choiceB) continue;
     const event = ALL_EVENTS.find((e) => e.code === code);
-    const textA = decisionText(code, choiceA);
-    const textB = decisionText(code, choiceB);
+    const textA = decisionText(code, choiceA, locale);
+    const textB = decisionText(code, choiceB, locale);
     if (event && textA && textB)
-      out.push({ question: event.kicker, a: textA, b: textB });
+      out.push({ question: tx(event.kicker, locale), a: textA, b: textB });
   }
   return out.slice(0, 4);
 }
@@ -49,8 +52,10 @@ function keyDifferences(
 function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
   const t = useTranslations("compare");
   const ts = useTranslations("stats");
-  const ch = getCharacter(life.characterId);
-  const ending = life.endingCode ? getEnding(life.endingCode) : null;
+  const tc = useTranslations("common");
+  const locale = useLocale() as Locale;
+  const ch = getCharacter(life.characterId, locale);
+  const ending = life.endingCode ? getEnding(life.endingCode, locale) : null;
   const lastIndex = [...life.seasons]
     .reverse()
     .find((s) => s.lifeIndex !== null)?.lifeIndex;
@@ -61,7 +66,7 @@ function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
       label: ts("money"),
       pct: moneyPct(life.currentStats.money),
       color: "var(--color-tg-amber)",
-      value: `${formatMoney(life.currentStats.money)} с`,
+      value: `${formatMoney(life.currentStats.money)} ${tc("currency")}`,
     },
     {
       label: ts("energy"),
@@ -143,6 +148,7 @@ function LifeColumn({ life, side }: { life: CompareLife; side: "a" | "b" }) {
 
 export function CompareScreen() {
   const t = useTranslations("compare");
+  const locale = useLocale() as Locale;
   const { data: lives } = useLives();
   const [aId, setAId] = useState<string | null>(null);
   const [bId, setBId] = useState<string | null>(null);
@@ -151,7 +157,7 @@ export function CompareScreen() {
   const candidates = (lives ?? []).filter((l) => l.status !== "archived");
   const playHref =
     candidates.length > 0 ? `/play/${candidates[0]!.id}` : "/lives";
-  const diffs = cmp ? keyDifferences(cmp.a, cmp.b) : [];
+  const diffs = cmp ? keyDifferences(cmp.a, cmp.b, locale) : [];
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[radial-gradient(120%_58%_at_50%_-12%,#FCF2E0_0%,rgba(252,242,224,0)_58%),linear-gradient(180deg,#F5EAD7_0%,#F0E2CB_60%,#ECDDC2_100%)] lg:min-h-0 lg:max-w-[860px] lg:bg-none">
@@ -189,7 +195,7 @@ export function CompareScreen() {
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {candidates.map((l) => {
-                      const ch = getCharacter(l.characterId);
+                      const ch = getCharacter(l.characterId, locale);
                       const active = value === l.id;
                       // одна жизнь не может стоять с обеих сторон сравнения
                       const disabled = other === l.id;
@@ -272,13 +278,13 @@ export function CompareScreen() {
                       <div className="mt-1.5 flex flex-col gap-1 text-[12.5px] leading-snug font-semibold lg:flex-row lg:gap-6 lg:[&>p]:flex-1">
                         <p className="m-0 text-tg-brown">
                           <span className="font-mono text-[10px] text-tg-muted">
-                            А
+                            {t("markA")}
                           </span>{" "}
                           {d.a}
                         </p>
                         <p className="m-0 text-tg-brown-2">
                           <span className="font-mono text-[10px] text-tg-muted">
-                            Б
+                            {t("markB")}
                           </span>{" "}
                           {d.b}
                         </p>

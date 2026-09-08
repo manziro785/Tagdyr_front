@@ -2,6 +2,8 @@ import axios, { AxiosError } from "axios";
 
 import { useAuthStore } from "@/entities/session/model/auth-store";
 import type { TokenPair } from "@/entities/game/api/types";
+import { currentLocale } from "@/i18n/current-locale";
+import { getPathname } from "@/i18n/navigation";
 import { API_BASE_URL } from "./base-url";
 
 export const api = axios.create({
@@ -14,6 +16,9 @@ api.interceptors.request.use((config) => {
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
+  // По этому заголовку сервер выбирает язык своего контента: дилемма дня,
+  // концовка, эпилог от AI.
+  config.headers["Accept-Language"] = currentLocale();
   return config;
 });
 
@@ -59,7 +64,11 @@ api.interceptors.response.use(
         return api.request(original);
       }
       if (typeof window !== "undefined") {
-        window.location.href = "/auth/login";
+        // с префиксом локали: иначе игрока с /ru выкидывает на английский вход
+        window.location.href = getPathname({
+          href: "/auth/login",
+          locale: currentLocale(),
+        });
       }
     }
     return Promise.reject(error);

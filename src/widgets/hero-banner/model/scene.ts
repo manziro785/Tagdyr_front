@@ -12,7 +12,6 @@ export type SceneStat = {
   labelKey: "money" | "energy" | "mood" | "relationships";
   icon: LucideIcon;
   value: string;
-  unit?: string;
   pct: number;
   color: string;
   tint: string;
@@ -41,7 +40,6 @@ export const SCENE = {
       labelKey: "money",
       icon: Coins,
       value: "5 000",
-      unit: "с",
       pct: 45,
       color: "var(--color-tg-amber)",
       tint: "var(--color-tg-amber-tint)",

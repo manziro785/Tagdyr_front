@@ -1,62 +1,119 @@
+import type { Locale } from "@/i18n/routing";
+
+import { tx, type Localized } from "../model/localized";
 import type { SceneName, SeasonMeta } from "../model/types";
 import { hashSeed } from "../model/rng";
 
 /**
  * Пять этапов жизни. Возраст стартует с 17; переходы между сезонами добавляют
  * годы по SEASON_YEAR_GAPS (1, 1, 3, 5) — та же таблица, что на сервере.
+ *
+ * Названия и тизеры — на трёх языках. Механика (turns) берётся отдельной
+ * функцией seasonTurns(), чтобы движок хода не зависел от языка.
  */
-export const SEASONS: readonly SeasonMeta[] = [
+const SEASONS: readonly SeasonMeta<Localized>[] = [
   {
     number: 1,
-    title: "Выпускник",
+    title: { ru: "Выпускник", en: "Graduate", ky: "Бүтүрүүчү" },
     ageAtStart: 17,
-    place: "Родной айыл",
+    place: { ru: "Родной айыл", en: "Home village", ky: "Туулган айыл" },
     scene: "valley",
     turns: 6,
-    teaser: "Бишкек, универ и первая своя жизнь",
+    teaser: {
+      ru: "Бишкек, универ и первая своя жизнь",
+      en: "Bishkek, university and a life of your own",
+      ky: "Бишкек, университет жана өз алдынча жашоо",
+    },
   },
   {
     number: 2,
-    title: "Студенчество",
+    title: { ru: "Студенчество", en: "Student years", ky: "Студенттик кез" },
     ageAtStart: 18,
-    place: "Бишкек · универ",
+    place: { ru: "Бишкек · универ", en: "Bishkek · university", ky: "Бишкек · университет" },
     scene: "campus",
     turns: 6,
-    teaser: "Первая настоящая работа и первая настоящая зарплата",
+    teaser: {
+      ru: "Первая настоящая работа и первая настоящая зарплата",
+      en: "Your first real job and your first real paycheck",
+      ky: "Биринчи чыныгы жумуш жана биринчи чыныгы айлык",
+    },
   },
   {
     number: 3,
-    title: "Первая работа",
+    title: { ru: "Первая работа", en: "First job", ky: "Биринчи жумуш" },
     ageAtStart: 19,
-    place: "Бишкек · Дордой и офисы",
+    place: {
+      ru: "Бишкек · Дордой и офисы",
+      en: "Bishkek · Dordoi and offices",
+      ky: "Бишкек · Дордой жана офистер",
+    },
     scene: "bazaar",
     turns: 6,
-    teaser: "Взрослые ставки: семья, жильё, своё дело",
+    teaser: {
+      ru: "Взрослые ставки: семья, жильё, своё дело",
+      en: "Grown-up stakes: family, housing, a business of your own",
+      ky: "Чоң кишинин коюмдары: үй-бүлө, турак жай, өз иши",
+    },
   },
   {
     number: 4,
-    title: "Зрелость",
+    title: { ru: "Зрелость", en: "Maturity", ky: "Жетилүү" },
     ageAtStart: 22,
-    place: "Бишкек · свой угол",
+    place: {
+      ru: "Бишкек · свой угол",
+      en: "Bishkek · a place of your own",
+      ky: "Бишкек · өз бурчуң",
+    },
     scene: "city",
     turns: 6,
-    teaser: "Время отдавать долги — и раздавать советы",
+    teaser: {
+      ru: "Время отдавать долги — и раздавать советы",
+      en: "Time to pay off debts — and to hand out advice",
+      ky: "Карыз төлөй турган — жана кеңеш бере турган убак",
+    },
   },
   {
     number: 5,
-    title: "Своя дорога",
+    title: { ru: "Своя дорога", en: "Your own road", ky: "Өз жолуң" },
     ageAtStart: 27,
-    place: "Иссык-Куль · и весь Кыргызстан",
+    place: {
+      ru: "Иссык-Куль · и весь Кыргызстан",
+      en: "Issyk-Kul · and all of Kyrgyzstan",
+      ky: "Ысык-Көл · жана бүт Кыргызстан",
+    },
     scene: "issykkul",
     turns: 6,
-    teaser: "",
+    teaser: null,
   },
 ];
 
-export function getSeason(n: number): SeasonMeta {
+function raw(n: number): SeasonMeta<Localized> {
   const meta = SEASONS[n - 1];
   if (!meta) throw new Error(`Unknown season ${n}`);
   return meta;
+}
+
+function localize(meta: SeasonMeta<Localized>, locale: Locale): SeasonMeta {
+  return {
+    ...meta,
+    title: tx(meta.title, locale),
+    place: tx(meta.place, locale),
+    teaser: meta.teaser ? tx(meta.teaser, locale) : null,
+  };
+}
+
+/** Мета сезона для экрана. Механике язык не нужен — там seasonTurns(). */
+export function getSeason(n: number, locale: Locale): SeasonMeta {
+  return localize(raw(n), locale);
+}
+
+export function getSeasons(locale: Locale): SeasonMeta[] {
+  return SEASONS.map((s) => localize(s, locale));
+}
+
+/** Сколько ходов в сезоне — чистая механика, без языка. */
+export function seasonTurns(n: number): number {
+  return raw(n).turns;
 }
 
 /**
@@ -74,15 +131,28 @@ const SCENE_VARIANTS: Record<SceneName, SceneName[]> = {
   "city-evening": ["city-evening"],
 };
 
-export function sceneForRun(season: SeasonMeta, seed: string): SceneName {
+export function sceneForRun(
+  season: Pick<SeasonMeta, "number" | "scene">,
+  seed: string,
+): SceneName {
   const pool = SCENE_VARIANTS[season.scene];
   return pool[hashSeed(`${seed}:scene:${season.number}`) % pool.length]!;
 }
 
 /** Название стадии для подписи возраста: «18 · юность». */
-export function ageStage(age: number): string {
-  if (age < 19) return "юность";
-  if (age < 23) return "молодость";
-  if (age < 28) return "зрелость";
-  return "своя дорога";
+const AGE_STAGES: { until: number; label: Localized }[] = [
+  { until: 19, label: { ru: "юность", en: "youth", ky: "өспүрүм" } },
+  { until: 23, label: { ru: "молодость", en: "young adult", ky: "жаштык" } },
+  { until: 28, label: { ru: "зрелость", en: "prime years", ky: "жетилүү" } },
+];
+
+const AGE_STAGE_LAST: Localized = {
+  ru: "своя дорога",
+  en: "own road",
+  ky: "өз жолу",
+};
+
+export function ageStage(age: number, locale: Locale): string {
+  const stage = AGE_STAGES.find((s) => age < s.until);
+  return tx(stage?.label ?? AGE_STAGE_LAST, locale);
 }

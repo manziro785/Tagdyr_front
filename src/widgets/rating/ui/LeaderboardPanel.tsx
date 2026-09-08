@@ -4,12 +4,13 @@ import { Medal, Trophy } from "lucide-react";
 import { useState } from "react";
 
 import { getCharacter } from "@/entities/game/content/characters";
-import { getSeason, SEASONS } from "@/entities/game/content/seasons";
+import { getSeason, getSeasons } from "@/entities/game/content/seasons";
 import { GameAvatar } from "@/entities/game/ui/GameAvatar";
 import { useLeaderboard } from "@/entities/meta/api";
 import type { LeaderboardWindow } from "@/entities/meta/api";
+import type { Locale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 const WINDOWS: { value: LeaderboardWindow; key: string }[] = [
   { value: "week", key: "windowWeek" },
@@ -26,6 +27,7 @@ const MEDAL_COLOR: Record<number, string> = {
 
 export function LeaderboardPanel() {
   const t = useTranslations("leaderboard");
+  const locale = useLocale() as Locale;
   // сезон 1 по умолчанию: его прошли все, кто вообще играл, — таблица не пустая
   const [season, setSeason] = useState(1);
   const [window, setWindow] = useState<LeaderboardWindow>("week");
@@ -37,7 +39,8 @@ export function LeaderboardPanel() {
 
   const entries = (data?.pages ?? []).flatMap((p) => p.entries);
   const first = data?.pages[0];
-  const seasonMeta = getSeason(season);
+  const seasonMeta = getSeason(season, locale);
+  const seasons = getSeasons(locale);
 
   return (
     <section className="flex flex-col gap-3 rounded-[22px] border border-tg-line-soft bg-tg-card p-4 shadow-[0_1px_2px_rgba(120,80,40,0.04)] lg:rounded-[28px] lg:border-white/70 lg:bg-[rgba(251,245,234,0.78)] lg:p-6 lg:shadow-[0_18px_50px_rgba(74,42,16,0.14)] lg:backdrop-blur-md">
@@ -53,7 +56,7 @@ export function LeaderboardPanel() {
 
       {/* сезон: на мобиле лента с горизонтальным скроллом, на десктопе — в строку */}
       <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-0.5 lg:mx-0 lg:flex-wrap lg:px-0">
-        {SEASONS.map((s) => (
+        {seasons.map((s) => (
           <button
             key={s.number}
             type="button"
@@ -128,7 +131,7 @@ export function LeaderboardPanel() {
         )}
 
         {entries.map((e) => {
-          const ch = getCharacter(e.characterId);
+          const ch = getCharacter(e.characterId, locale);
           return (
             <div
               key={e.lifeId}

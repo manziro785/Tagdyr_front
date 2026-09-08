@@ -7,6 +7,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
+import { useLocale } from "next-intl";
+
 import { useAuthStore } from "@/entities/session/model/auth-store";
 
 import { metaApi } from "./meta-api";
@@ -22,7 +24,8 @@ export type {
 } from "./types";
 
 const keys = {
-  dilemma: () => ["meta", "dilemma", "today"] as const,
+  // текст дилеммы приходит с сервера переведённым — язык обязан быть в ключе
+  dilemma: (locale: string) => ["meta", "dilemma", "today", locale] as const,
   leaderboard: (season: number, window: LeaderboardWindow) =>
     ["meta", "leaderboard", season, window] as const,
 };
@@ -34,8 +37,9 @@ function useIsUser(): boolean {
 
 export function useDilemmaToday() {
   const enabled = useIsUser();
+  const locale = useLocale();
   return useQuery({
-    queryKey: keys.dilemma(),
+    queryKey: keys.dilemma(locale),
     queryFn: () => metaApi.getTodayDilemma(),
     enabled,
   });
@@ -43,11 +47,12 @@ export function useDilemmaToday() {
 
 export function useAnswerDilemma() {
   const qc = useQueryClient();
+  const locale = useLocale();
   return useMutation({
     mutationFn: (choiceIndex: number) => metaApi.answerTodayDilemma(choiceIndex),
     // ответ мутации — та же дилемма со свежим распределением: кладём в кэш
     // напрямую, чтобы проценты появились без второго запроса
-    onSuccess: (data: DilemmaToday) => qc.setQueryData(keys.dilemma(), data),
+    onSuccess: (data: DilemmaToday) => qc.setQueryData(keys.dilemma(locale), data),
   });
 }
 

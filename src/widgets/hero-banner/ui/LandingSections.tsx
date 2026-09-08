@@ -7,11 +7,12 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { SessionAwareLink } from "@/features/auth/ui/SessionAwareLink";
 
-import { ENDINGS } from "@/entities/game/content/endings";
+import { getEndings } from "@/entities/game/content/endings";
+import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 
 /** Концовки, которые показываем на лендинге как «истории». */
@@ -46,9 +47,11 @@ export function LandingSections() {
   const t = useTranslations("landing.sections");
   const tl = useTranslations("landing");
   const tc = useTranslations("common");
+  const locale = useLocale() as Locale;
+  const endings = getEndings(locale);
   const stories = STORY_CODES.map((code) =>
-    ENDINGS.find((e) => e.code === code),
-  ).filter((e): e is (typeof ENDINGS)[number] => Boolean(e));
+    endings.find((e) => e.code === code),
+  ).filter((e): e is (typeof endings)[number] => Boolean(e));
 
   return (
     <div className="bg-tg-cream font-sans text-tg-brown">
@@ -81,7 +84,7 @@ export function LandingSections() {
                 {t(`${key}Title`)}
               </h3>
               <p className="m-0 text-[14px] leading-[1.6] font-medium text-tg-brown-2">
-                {t(`${key}Text`, { count: ENDINGS.length })}
+                {t(`${key}Text`, { count: endings.length })}
               </p>
             </div>
           ))}
