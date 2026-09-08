@@ -231,6 +231,7 @@
   },
   "interseason": {
     "seasonEnd": "{number}-сезондун аягы",
+    "aiWriting": "жазып жатам…",
     "title": "{season} — бөлүм жабылды",
     "years": "{count, plural, one {# жыл} other {# жыл}}",
     "instant": "көз ирмем",

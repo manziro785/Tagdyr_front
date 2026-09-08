@@ -8,6 +8,7 @@ import {
   Coins,
   Flag,
   Heart,
+  PenLine,
   PiggyBank,
   Quote,
   Smile,
@@ -45,10 +46,13 @@ export function InterseasonView({
   run,
   onContinue,
   continuing,
+  aiWriting = false,
 }: {
   run: RunState;
   onContinue: () => void;
   continuing: boolean;
+  /** Идёт генерация эпилога моделью — показываем каретку вместо тихой подмены. */
+  aiWriting?: boolean;
 }) {
   const t = useTranslations("interseason");
   const ts = useTranslations("stats");
@@ -134,7 +138,21 @@ export function InterseasonView({
           <Quote size={24} className="mb-1.5 fill-tg-amber stroke-none opacity-50" />
           <p className="m-0 text-sm leading-[1.6] font-medium text-pretty text-tg-brown-2">
             {close.epilogue}
+            {aiWriting && (
+              <span
+                aria-hidden
+                className="ml-0.5 inline-block w-[2px] animate-pulse bg-tg-amber-deep align-[-0.15em] text-transparent select-none"
+              >
+                |
+              </span>
+            )}
           </p>
+          {aiWriting && (
+            <p className="mt-2 mb-0 flex items-center gap-1.5 font-display text-[10.5px] font-bold tracking-[0.4px] text-tg-muted uppercase">
+              <PenLine size={11} className="animate-pulse stroke-tg-amber-deep" />
+              {t("aiWriting")}
+            </p>
+          )}
         </div>
 
         {/* итог цели сезона */}

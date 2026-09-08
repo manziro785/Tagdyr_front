@@ -231,6 +231,7 @@
   },
   "interseason": {
     "seasonEnd": "Конец сезона {number}",
+    "aiWriting": "записываю…",
     "title": "{season} — этап позади",
     "years": "{count, plural, one {# год} few {# года} other {# лет}}",
     "instant": "миг",

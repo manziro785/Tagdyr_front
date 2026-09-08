@@ -60,7 +60,7 @@ export function PlayScreen({ lifeId }: { lifeId: string }) {
   const finishRequested = useRef(false);
 
   // шаблонный эпилог уже в сторе; у залогиненных его заменит текст от модели
-  useAiEpilogue(lifeId, run);
+  const aiWriting = useAiEpilogue(lifeId, run);
 
   // восстановление рана: сервер хранит состояние на начало сезона (§1 ТЗ),
   // потерянный localStorage означает «сезон начинается заново»
@@ -174,7 +174,14 @@ export function PlayScreen({ lifeId }: { lifeId: string }) {
   if (run?.phase === "finale" && run.finale) return <FinaleView run={run} />;
 
   if (run?.phase === "interseason" && run.seasonClose) {
-    return <InterseasonView run={run} onContinue={onContinue} continuing={finishLife.isPending} />;
+    return (
+      <InterseasonView
+        run={run}
+        onContinue={onContinue}
+        continuing={finishLife.isPending}
+        aiWriting={aiWriting}
+      />
+    );
   }
 
   if (run?.phase === "season-end") {

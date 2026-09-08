@@ -231,6 +231,7 @@
   },
   "interseason": {
     "seasonEnd": "End of season {number}",
+    "aiWriting": "writing the entry…",
     "title": "{season} — chapter closed",
     "years": "{count, plural, one {# year} other {# years}}",
     "instant": "a blink",
