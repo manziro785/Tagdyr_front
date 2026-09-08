@@ -126,6 +126,11 @@ interface RunsStore {
   dismissOutcome: (lifeId: string) => void;
   /** Зафиксировать завершение сезона (данные от API или локального расчёта). */
   closeSeason: (lifeId: string, close: SeasonClose) => void;
+  /**
+   * Заменить текст эпилога, пока идёт межсезонье. Нужен AI-стриму: сначала
+   * показываем шаблон, потом дописываем приходящий с сервера текст.
+   */
+  setEpilogue: (lifeId: string, epilogue: string) => void;
   /** Начать следующий сезон из seasonClose.next. */
   beginNextSeason: (lifeId: string) => void;
   /** Перейти к финалу жизни. */
@@ -253,6 +258,19 @@ export const useRunsStore = create<RunsStore>()(
           if (!run) return s;
           return {
             runs: { ...s.runs, [lifeId]: { ...run, phase: "interseason", seasonClose: close } },
+          };
+        }),
+
+      setEpilogue: (lifeId, epilogue) =>
+        set((s) => {
+          const run = s.runs[lifeId];
+          // за время генерации игрок мог уйти дальше — тогда текст уже некуда класть
+          if (!run?.seasonClose) return s;
+          return {
+            runs: {
+              ...s.runs,
+              [lifeId]: { ...run, seasonClose: { ...run.seasonClose, epilogue } },
+            },
           };
         }),
 

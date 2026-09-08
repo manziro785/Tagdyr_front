@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
 import { useCompleteSeason, useFinishLife, useLife } from "@/entities/game/api";
+import { useAiEpilogue } from "@/features/ai-epilogue/model/use-ai-epilogue";
 import { composeEpilogue } from "@/entities/game/model/epilogue";
 import { useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -57,6 +58,9 @@ export function PlayScreen({ lifeId }: { lifeId: string }) {
   const completeSeason = useCompleteSeason();
   const finishLife = useFinishLife();
   const finishRequested = useRef(false);
+
+  // шаблонный эпилог уже в сторе; у залогиненных его заменит текст от модели
+  useAiEpilogue(lifeId, run);
 
   // восстановление рана: сервер хранит состояние на начало сезона (§1 ТЗ),
   // потерянный localStorage означает «сезон начинается заново»
