@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -32,11 +33,16 @@ export function HeroSlideshow() {
   return (
     <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
       {SLIDES.map((src, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        // fill + sizes="100vw": три кадра 1920×1080 на лендинге — самый тяжёлый
+        // трафик проекта; телефону нужен 640-й. priority только на первом слайде:
+        // он и есть фон первого экрана, остальные два браузер догрузит сам.
+        <Image
           key={src}
           src={src}
           alt=""
+          fill
+          sizes="100vw"
+          priority={i === 0}
           className={cn(
             "absolute inset-0 size-full object-cover transition-opacity duration-[2200ms] ease-in-out",
             i === active ? "opacity-100" : "opacity-0",

@@ -8,6 +8,8 @@ import {
   User,
 } from "lucide-react";
 
+import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 import { SCENE, type SceneChoice, type SceneStat } from "../model/scene";
 import { Avatar } from "./Avatar";
@@ -172,9 +174,12 @@ export function PhoneScreen() {
   return (
     <div className="relative flex h-[844px] w-[390px] flex-col bg-[#ECDDC2] text-tg-brown antialiased">
       <div className="absolute inset-0 overflow-hidden">
-        <img
+        {/* макет телефона фиксированной ширины — 390px хватает, полный кадр не нужен */}
+        <Image
           src="/tagdyr/blur/campus.jpg"
           alt=""
+          fill
+          sizes="390px"
           className="absolute inset-0 size-full object-cover"
         />
         <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(245,235,221,0.34)_0%,rgba(244,233,216,0.28)_34%,rgba(243,229,208,0.6)_74%,rgba(238,222,198,0.86)_100%)]" />

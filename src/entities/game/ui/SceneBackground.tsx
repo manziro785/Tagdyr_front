@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import type { SeasonMeta } from "../model/types";
 
 /**
@@ -28,10 +30,16 @@ export function SceneBackground({
 }) {
   return (
     <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
-      {/* обычный img: фон декоративный, next/image тут не даст ничего кроме хлопот с fill */}
-      <img
+      {/*
+        fill + sizes="100vw": исходники — 1920×1080 JPEG, а на телефоне нужен
+        640-й. Раньше тут стоял <img> и мобильный тянул полный десктопный кадр.
+        Родитель позиционирован (absolute inset-0), так что fill корректен.
+      */}
+      <Image
         src={SCENE_SRC[scene]}
         alt=""
+        fill
+        sizes="100vw"
         className="absolute inset-0 size-full object-cover transition-opacity duration-700"
       />
       <span

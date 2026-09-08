@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 import { SCENE_SRC } from "@/entities/game/ui/SceneBackground";
 import type { SceneName } from "@/entities/game/model/types";
@@ -26,8 +27,14 @@ export function GameFrame({
     <div className="lg:relative lg:min-h-dvh">
       {/* сцена: fixed, чтобы покрывать вьюпорт целиком при любой высоте контента */}
       <div aria-hidden className="fixed inset-0 hidden lg:block">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={SCENE_SRC[scene]} alt="" className="size-full object-cover" />
+        {/* родитель hidden lg:block — на телефоне картинка не в вьюпорте и ленивая загрузка её пропустит */}
+        <Image
+          src={SCENE_SRC[scene]}
+          alt=""
+          fill
+          sizes="100vw"
+          className="size-full object-cover"
+        />
         <span className="absolute inset-0 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(250,242,228,0.30)_0%,rgba(250,242,228,0)_60%),linear-gradient(180deg,rgba(245,235,221,0.30)_0%,rgba(244,233,216,0.24)_40%,rgba(243,229,208,0.55)_80%,rgba(238,222,198,0.85)_100%)]" />
       </div>
 

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 
 /**
@@ -64,11 +66,17 @@ export function GameAvatar({
             breathe && "tg-breathe",
           )}
         >
-          {/* обычный img: портрет декоративный и фиксированного размера — как в SceneBackground */}
-          <img
+          {/*
+            next/image, а не <img>: исходники — PNG 512×512 по ~175 КБ, а рисуем
+            их в 34–210 px. Next отдаёт WebP нужной ширины, экономя ~90% веса.
+            Портрет декоративный, поэтому alt="" и aria-hidden.
+          */}
+          <Image
             src={src}
             alt=""
             aria-hidden
+            width={size}
+            height={size}
             className="size-full object-cover"
             draggable={false}
           />

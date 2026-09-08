@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/features/locale/ui/LocaleSwitcher";
@@ -15,10 +16,12 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       {/* фон: размытая долина с юртами + тёплый скрим */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {/* блюр запечён в jpg: рантайм-blur() давал GPU-шов на широких экранах */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="/tagdyr/blur/valley.jpg"
           alt=""
+          fill
+          sizes="100vw"
+          priority
           className="absolute inset-0 size-full object-cover"
         />
         <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(245,235,221,0.34)_0%,rgba(244,233,216,0.28)_34%,rgba(243,229,208,0.6)_74%,rgba(238,222,198,0.86)_100%)]" />
